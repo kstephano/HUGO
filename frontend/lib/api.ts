@@ -1,0 +1,49 @@
+/** Typed REST API client — thin wrappers around fetch with error handling. */
+import type { Conversation, Message, User } from "./types";
+
+const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const resp = await fetch(`${BASE}${path}`, {
+    credentials: "include",
+    headers: { "Content-Type": "application/json", ...init?.headers },
+    ...init,
+  });
+  if (!resp.ok) {
+    const body = await resp.text().catch(() => "");
+    throw new Error(`${resp.status} ${resp.statusText}: ${body}`);
+  }
+  return resp.json() as Promise<T>;
+}
+
+export const api = {
+  auth: {
+    devLogin: (email: string, displayName: string) =>
+      request<User>("/api/auth/dev-login", {
+        method: "POST",
+        body: JSON.stringify({ email, display_name: displayName }),
+      }),
+    me: () => request<User>("/api/auth/me"),
+    logout: () => request<{ ok: boolean }>("/api/auth/logout", { method: "POST" }),
+  },
+
+  conversations: {
+    list: (limit = 20, offset = 0) =>
+      request<{ items: Conversation[]; total: number }>(`/api/conversations?limit=${limit}&offset=${offset}`),
+    create: (title?: string) =>
+      request<Conversation>("/api/conversations", {
+        method: "POST",
+        body: JSON.stringify({ title: title ?? null }),
+      }),
+    get: (id: string) => request<Conversation>(`/api/conversations/${id}`),
+    delete: (id: string) =>
+      fetch(`${BASE}/api/conversations/${id}`, { method: "DELETE", credentials: "include" }),
+  },
+
+  messages: {
+    list: (conversationId: string, limit = 50, offset = 0) =>
+      request<{ items: Message[]; total: number }>(
+        `/api/conversations/${conversationId}/messages?limit=${limit}&offset=${offset}`
+      ),
+  },
+};
