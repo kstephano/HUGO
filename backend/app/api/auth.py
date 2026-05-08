@@ -47,7 +47,7 @@ async def dev_login(
         httponly=True,
         samesite="lax",
         max_age=settings.session_ttl_seconds,
-        secure=False,  # set to True behind TLS in production
+        secure=settings.production,
     )
     return SessionResponse(user_id=user.id, email=user.email, display_name=user.display_name)
 

@@ -43,6 +43,9 @@ class Settings(BaseSettings):
     # Mock providers
     mock_providers: bool = False
 
+    # Production flag — enables secure cookies, tightens defaults
+    production: bool = False
+
     # Logging
     log_level: str = "INFO"
     log_json: bool = True

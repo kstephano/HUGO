@@ -4,13 +4,16 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && pip install --upgrade pip
 
 COPY pyproject.toml .
 RUN pip install --no-cache-dir -e .
 
 COPY . .
 
+RUN chmod +x start.sh
+
 EXPOSE 8000
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["./start.sh"]
