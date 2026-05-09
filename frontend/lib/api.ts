@@ -18,6 +18,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
 export const api = {
   auth: {
+    guest: () => request<User>("/api/auth/guest", { method: "POST" }),
     devLogin: (email: string, displayName: string) =>
       request<User>("/api/auth/dev-login", {
         method: "POST",

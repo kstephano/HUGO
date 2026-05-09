@@ -1,6 +1,6 @@
 """
-Dev login endpoint: upsert user, issue HTTP-only session cookie via Redis (job #7).
-Replace with real OAuth/OIDC in production.
+Auth endpoints: guest login (portfolio), dev login, session management.
+Guest login creates an anonymous throwaway user + session cookie on first visit.
 """
 from __future__ import annotations
 import secrets
@@ -14,6 +14,42 @@ from app.db.models import User
 from app.schemas.auth import DevLoginRequest, SessionResponse
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+
+@router.post("/guest", response_model=SessionResponse)
+async def guest_login(
+    response: Response,
+    db: AsyncSession = Depends(get_db),
+    redis=Depends(get_redis_dep),
+):
+    """Create an anonymous guest session — no credentials required."""
+    settings = get_settings()
+
+    guest_id = str(uuid.uuid4())
+    user = User(
+        id=guest_id,
+        email=f"guest_{guest_id}@hugo.internal",
+        display_name="Guest",
+    )
+    db.add(user)
+    await db.commit()
+    await db.refresh(user)
+
+    token = secrets.token_urlsafe(32)
+    try:
+        await redis.setex(f"session:{token}", settings.session_ttl_seconds, user.id)
+    except Exception:
+        raise HTTPException(status_code=503, detail="Session store unavailable")
+
+    response.set_cookie(
+        key="session_token",
+        value=token,
+        httponly=True,
+        samesite="none" if settings.production else "lax",
+        max_age=settings.session_ttl_seconds,
+        secure=settings.production,
+    )
+    return SessionResponse(user_id=user.id, email=user.email, display_name=user.display_name)
 
 
 @router.post("/dev-login", response_model=SessionResponse)
