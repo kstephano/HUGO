@@ -65,12 +65,12 @@ async def run_loop(
         await send(WsError(code="not_found", message="Conversation not found").model_dump_json())
         return
 
-    # Persist user message
-    await save_user_message(db, conversation_id, user_content, client_message_id)
-
-    # Re-load messages after persisting user turn
-    conversation = await load_conversation(db, conversation_id, user_id)
+    # Build history from the already-loaded conversation, then persist and append
+    # the user turn. Reloading the conversation after commit hits SQLAlchemy's
+    # identity map (expire_on_commit=False) and returns stale cached messages.
     messages = build_messages(conversation)
+    await save_user_message(db, conversation_id, user_content, client_message_id)
+    messages.append({"role": "user", "content": user_content})
 
     accumulated_text: list[str] = []
     accumulated_thinking: list[str] = []
