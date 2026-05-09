@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { useStore } from "@/lib/store";
+import { Bot, User } from "lucide-react";
 import type { Message } from "@/lib/types";
 import clsx from "clsx";
 
@@ -19,18 +20,34 @@ function MessageBubble({ msg }: { msg: Message }) {
       : "";
 
   return (
-    <div className={clsx("flex", isUser ? "justify-end" : "justify-start")}>
+    <div className={clsx("flex items-end gap-2.5", isUser ? "flex-row-reverse" : "flex-row")}>
+      {/* Avatar */}
       <div
         className={clsx(
-          "max-w-[75%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap",
+          "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center",
           isUser
-            ? "bg-blue-600 text-white rounded-br-sm"
-            : "bg-white border border-slate-200 text-slate-800 rounded-bl-sm shadow-sm"
+            ? "bg-indigo-600"
+            : "bg-[rgb(var(--border))]"
         )}
       >
-        {text}
+        {isUser
+          ? <User className="w-3.5 h-3.5 text-white" />
+          : <Bot className="w-3.5 h-3.5 text-[rgb(var(--muted))]" />
+        }
+      </div>
+
+      {/* Bubble */}
+      <div
+        className={clsx(
+          "max-w-[72%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
+          isUser
+            ? "bg-indigo-600 text-white rounded-br-sm"
+            : "bg-[rgb(var(--bubble-assistant))] text-[rgb(var(--fg))] border border-[rgb(var(--border))] rounded-bl-sm shadow-sm"
+        )}
+      >
+        <p className="whitespace-pre-wrap break-words">{text}</p>
         {msg.status === "cancelled" && (
-          <span className="ml-2 text-xs opacity-60 italic">(cancelled)</span>
+          <span className="mt-1 block text-[10px] opacity-50 italic">generation stopped</span>
         )}
       </div>
     </div>
@@ -43,24 +60,53 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
   if (!active && !isPending) return null;
 
   return (
-    <div className="flex justify-start">
-      <div className="max-w-[75%] rounded-2xl rounded-bl-sm px-4 py-3 text-sm leading-relaxed bg-white border border-slate-200 text-slate-800 shadow-sm">
+    <div className="flex items-end gap-2.5">
+      {/* Avatar */}
+      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[rgb(var(--border))] flex items-center justify-center">
+        <Bot className="w-3.5 h-3.5 text-[rgb(var(--muted))]" />
+      </div>
+
+      {/* Bubble */}
+      <div className="max-w-[72%] rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm leading-relaxed bg-[rgb(var(--bubble-assistant))] text-[rgb(var(--fg))] border border-[rgb(var(--border))] shadow-sm">
+        {/* Pending state — no tokens yet */}
         {isPending && !active && (
-          <span className="text-slate-400 italic">Thinking…</span>
+          <span className="flex items-center gap-1.5 text-[rgb(var(--muted))] text-xs italic">
+            <span className="w-1 h-1 rounded-full bg-[rgb(var(--muted))] animate-bounce [animation-delay:0ms]" />
+            <span className="w-1 h-1 rounded-full bg-[rgb(var(--muted))] animate-bounce [animation-delay:150ms]" />
+            <span className="w-1 h-1 rounded-full bg-[rgb(var(--muted))] animate-bounce [animation-delay:300ms]" />
+          </span>
         )}
+
+        {/* Extended thinking excerpt */}
         {active && streaming.thinking && (
-          <div className="text-xs text-slate-400 italic mb-2 border-l-2 border-slate-200 pl-2">
-            {streaming.thinking.slice(-200)}
+          <p className="text-[11px] text-[rgb(var(--muted))] italic mb-2 border-l-2 border-[rgb(var(--border))] pl-2 line-clamp-2">
+            {streaming.thinking.slice(-300)}
+          </p>
+        )}
+
+        {/* Tool-use badges */}
+        {active && streaming.toolUses.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-2">
+            {streaming.toolUses.map((t) => (
+              <span
+                key={t.toolUseId}
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 text-[10px] font-medium border border-indigo-100 dark:border-indigo-900"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+                {t.toolName}
+                {t.result && <span className="text-emerald-500 ml-0.5">✓</span>}
+              </span>
+            ))}
           </div>
         )}
-        {active && streaming.toolUses.map((t) => (
-          <div key={t.toolUseId} className="text-xs text-indigo-500 mb-1">
-            ⚙ {t.toolName}
-            {t.result && <span className="text-slate-400 ml-1">✓</span>}
-          </div>
-        ))}
-        {active && <span>{streaming.text}</span>}
-        <span className="inline-block w-1.5 h-4 bg-slate-400 animate-pulse ml-0.5 align-text-bottom" />
+
+        {/* Streaming text */}
+        {active && (
+          <p className="whitespace-pre-wrap break-words">
+            {streaming.text}
+            <span className="inline-block w-0.5 h-[1em] bg-[rgb(var(--fg))] opacity-70 animate-pulse ml-0.5 align-text-bottom rounded-full" />
+          </p>
+        )}
       </div>
     </div>
   );
@@ -75,12 +121,14 @@ export function MessageList({ conversationId, isPending = false }: Props) {
   }, [messages.length, isPending]);
 
   return (
-    <div className="flex-1 overflow-y-auto scrollbar-thin px-4 py-6 space-y-4">
-      {messages.map((msg) => (
-        <MessageBubble key={msg.id} msg={msg} />
-      ))}
-      <StreamingBubble isPending={isPending} />
-      <div ref={bottomRef} />
+    <div className="flex-1 overflow-y-auto scrollbar-thin px-4 py-6">
+      <div className="max-w-3xl mx-auto space-y-6">
+        {messages.map((msg) => (
+          <MessageBubble key={msg.id} msg={msg} />
+        ))}
+        <StreamingBubble isPending={isPending} />
+        <div ref={bottomRef} />
+      </div>
     </div>
   );
 }

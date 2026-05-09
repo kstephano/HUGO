@@ -1,6 +1,7 @@
 "use client";
 import { useStore } from "@/lib/store";
 import { api } from "@/lib/api";
+import { Plus, Trash2, Bot } from "lucide-react";
 import clsx from "clsx";
 
 export function ConversationSidebar() {
@@ -39,37 +40,51 @@ export function ConversationSidebar() {
   };
 
   return (
-    <aside className="w-64 flex-shrink-0 bg-surface-900 text-slate-200 flex flex-col h-full">
-      <div className="p-4 border-b border-slate-700">
-        <h1 className="text-lg font-semibold tracking-tight">Hugo</h1>
+    <aside className="w-60 flex-shrink-0 flex flex-col h-full bg-[rgb(var(--sidebar-bg))] border-r border-[rgb(var(--sidebar-border))]">
+      {/* Logo */}
+      <div className="flex items-center gap-2.5 px-4 py-4 border-b border-[rgb(var(--sidebar-border))]">
+        <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center flex-shrink-0">
+          <Bot className="w-4 h-4 text-white" />
+        </div>
+        <span className="text-[rgb(var(--sidebar-fg))] font-semibold tracking-tight">Hugo</span>
       </div>
+
+      {/* New conversation */}
       <div className="p-3">
         <button
           onClick={handleNew}
-          className="w-full py-2 px-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors"
         >
-          + New conversation
+          <Plus className="w-4 h-4" />
+          New chat
         </button>
       </div>
-      <nav className="flex-1 overflow-y-auto scrollbar-thin px-2 space-y-1">
+
+      {/* Conversation list */}
+      <nav className="flex-1 overflow-y-auto scrollbar-thin px-2 pb-2 space-y-0.5">
+        {conversations.length === 0 && (
+          <p className="text-center text-[10px] text-[rgb(var(--muted))] mt-6 px-3">
+            No conversations yet
+          </p>
+        )}
         {conversations.map((conv) => (
           <div
             key={conv.id}
             onClick={() => handleSelect(conv.id)}
             className={clsx(
-              "flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer group text-sm",
+              "group flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer text-sm transition-colors",
               activeId === conv.id
-                ? "bg-slate-700 text-white"
-                : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                ? "bg-white/10 text-white"
+                : "text-[rgb(var(--muted))] hover:bg-white/5 hover:text-[rgb(var(--sidebar-fg))]"
             )}
           >
-            <span className="truncate">{conv.title ?? "Untitled"}</span>
+            <span className="truncate leading-snug">{conv.title ?? "New conversation"}</span>
             <button
               onClick={(e) => handleDelete(e, conv.id)}
-              className="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-red-400 ml-2 text-xs"
+              className="opacity-0 group-hover:opacity-100 ml-2 flex-shrink-0 text-[rgb(var(--muted))] hover:text-red-400 transition-opacity"
               aria-label="Delete conversation"
             >
-              ✕
+              <Trash2 className="w-3.5 h-3.5" />
             </button>
           </div>
         ))}

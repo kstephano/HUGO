@@ -5,6 +5,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
+import { Send, Square } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { HugoWebSocket } from "@/lib/ws";
 import { MessageList } from "./MessageList";
@@ -18,6 +19,7 @@ export function ChatInterface({ conversationId }: Props) {
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const wsRef = useRef<HugoWebSocket | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const setConnectionStatus = useStore((s) => s.setConnectionStatus);
   const appendStreamDelta = useStore((s) => s.appendStreamDelta);
@@ -88,6 +90,14 @@ export function ChatInterface({ conversationId }: Props) {
     return () => ws.destroy();
   }, [conversationId]);
 
+  // Auto-grow the textarea
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
+  }, [input]);
+
   const handleSend = () => {
     const content = input.trim();
     if (!content || isStreaming) return;
@@ -120,12 +130,14 @@ export function ChatInterface({ conversationId }: Props) {
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-hidden">
       <MessageList conversationId={conversationId} isPending={isStreaming} />
 
-      <div className="border-t border-slate-200 p-4 bg-white">
-        <div className="flex gap-3 items-end">
+      {/* Input bar */}
+      <div className="flex-shrink-0 border-t border-[rgb(var(--border))] bg-[rgb(var(--input-bg))] px-4 py-3">
+        <div className="max-w-3xl mx-auto flex items-end gap-3">
           <textarea
+            ref={textareaRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
@@ -134,28 +146,33 @@ export function ChatInterface({ conversationId }: Props) {
                 handleSend();
               }
             }}
-            placeholder="Send a message…"
+            placeholder="Message Hugo…"
             rows={1}
-            className="flex-1 resize-none rounded-xl border border-slate-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent max-h-40 overflow-y-auto"
-            style={{ height: "auto" }}
+            disabled={isStreaming}
+            className="flex-1 resize-none rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] text-[rgb(var(--fg))] placeholder:text-[rgb(var(--muted))] px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition overflow-hidden disabled:opacity-50"
           />
           {isStreaming ? (
             <button
               onClick={handleCancel}
-              className="px-4 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-medium transition-colors"
+              className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-red-500 hover:bg-red-400 text-white transition-colors"
+              aria-label="Stop"
             >
-              Stop
+              <Square className="w-4 h-4 fill-current" />
             </button>
           ) : (
             <button
               onClick={handleSend}
               disabled={!input.trim()}
-              className="px-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white text-sm font-medium transition-colors"
+              className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 disabled:cursor-not-allowed text-white transition-colors"
+              aria-label="Send"
             >
-              Send
+              <Send className="w-4 h-4" />
             </button>
           )}
         </div>
+        <p className="text-center text-[10px] text-[rgb(var(--muted))] mt-2">
+          Enter to send · Shift+Enter for new line
+        </p>
       </div>
     </div>
   );

@@ -2,27 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 15, 23, 42;
-  --background-rgb: 248, 250, 252;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --foreground-rgb: 248, 250, 252;
-    --background-rgb: 15, 23, 42;
+    --bg: 248 250 252;
+    --fg: 15 23 42;
+    --muted: 148 163 184;
+    --border: 226 232 240;
+    --sidebar-bg: 15 23 42;
+    --sidebar-fg: 226 232 240;
+    --sidebar-border: 30 41 59;
+    --bubble-user: 79 70 229;
+    --bubble-assistant: 255 255 255;
+    --input-bg: 255 255 255;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: 15 23 42;
+      --fg: 226 232 240;
+      --muted: 100 116 139;
+      --border: 30 41 59;
+      --sidebar-bg: 9 9 11;
+      --sidebar-fg: 226 232 240;
+      --sidebar-border: 24 24 27;
+      --bubble-user: 79 70 229;
+      --bubble-assistant: 30 41 59;
+      --input-bg: 22 32 52;
+    }
+  }
+
+  html { color-scheme: light dark; }
+
+  body {
+    background-color: rgb(var(--bg));
+    color: rgb(var(--fg));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
+/* Thin scrollbars everywhere */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--muted) / 0.35) transparent;
 }
-
-.scrollbar-thin::-webkit-scrollbar {
-  width: 4px;
-}
+.scrollbar-thin::-webkit-scrollbar { width: 4px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 2px;
+  background: rgb(var(--muted) / 0.35);
+  border-radius: 99px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--muted) / 0.6);
 }

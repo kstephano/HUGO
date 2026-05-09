@@ -6,7 +6,11 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
+      },
       colors: {
+        // Legacy surface tokens kept for compatibility
         surface: {
           50: "#f8fafc",
           100: "#f1f5f9",
