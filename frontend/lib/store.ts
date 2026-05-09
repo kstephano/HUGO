@@ -97,8 +97,5 @@ export const useStore = create<StoreState>((set, get) => ({
       );
       return { streaming: { ...s.streaming, toolUses } };
     }),
-  finalizeStreaming: () =>
-    set((s) => ({
-      streaming: s.streaming ? { ...s.streaming, isComplete: true } : null,
-    })),
+  finalizeStreaming: () => set({ streaming: null }),
 }));

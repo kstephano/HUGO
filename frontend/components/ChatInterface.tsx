@@ -18,6 +18,7 @@ interface Props {
 export function ChatInterface({ conversationId }: Props) {
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const wsRef = useRef<HugoWebSocket | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -72,11 +73,12 @@ export function ChatInterface({ conversationId }: Props) {
       case "error":
         setIsStreaming(false);
         finalizeStreaming();
-        console.error("ws_error", frame.code, frame.message);
+        setErrorMsg(frame.message || "Something went wrong. Please try again.");
         break;
       case "rate_limited":
         setIsStreaming(false);
         finalizeStreaming();
+        setErrorMsg("Too many messages. Please wait a moment before trying again.");
         break;
     }
   };
@@ -104,6 +106,7 @@ export function ChatInterface({ conversationId }: Props) {
   const handleSend = () => {
     const content = input.trim();
     if (!content || isStreaming) return;
+    setErrorMsg(null);
     const clientMessageId = uuid();
     appendMessage({
       id: clientMessageId,
@@ -132,6 +135,13 @@ export function ChatInterface({ conversationId }: Props) {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <MessageList conversationId={conversationId} isPending={isStreaming} />
+
+      {/* Error banner */}
+      {errorMsg && (
+        <div className="flex-shrink-0 px-4 py-2 bg-red-500/10 border-t border-red-500/20 text-red-400 text-xs text-center tracking-wide">
+          {errorMsg}
+        </div>
+      )}
 
       {/* Input bar */}
       <div className="flex-shrink-0 border-t border-[rgb(var(--border))] bg-[rgb(var(--input-bg))] px-4 py-3">

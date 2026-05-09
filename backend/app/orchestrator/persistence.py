@@ -11,10 +11,14 @@ log = get_logger(__name__)
 
 
 async def load_conversation(db: AsyncSession, conversation_id: str, user_id: str) -> Conversation | None:
+    # populate_existing=True forces SQLAlchemy to overwrite the identity-map
+    # instance with fresh DB data on every call — critical for the long-lived
+    # WebSocket session where expire_on_commit=False keeps stale objects alive.
     stmt = (
         select(Conversation)
         .where(Conversation.id == conversation_id, Conversation.user_id == user_id)
         .options(selectinload(Conversation.messages))
+        .execution_options(populate_existing=True)
     )
     result = await db.execute(stmt)
     return result.scalar_one_or_none()
