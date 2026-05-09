@@ -7,10 +7,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/* \
     && pip install --upgrade pip
 
-COPY backend/pyproject.toml .
-RUN pip install --no-cache-dir -e .
+COPY ./ .
 
-COPY backend/ .
+RUN pip install --no-cache-dir .
 
 RUN chmod +x start.sh
 
