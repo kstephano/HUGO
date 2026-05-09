@@ -26,13 +26,13 @@ function MessageBubble({ msg }: { msg: Message }) {
         className={clsx(
           "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center",
           isUser
-            ? "bg-indigo-600"
+            ? "bg-gradient-to-br from-amber-500 to-amber-700 shadow-[0_0_8px_rgba(245,158,11,0.4)]"
             : "bg-[rgb(var(--border))]"
         )}
       >
         {isUser
           ? <User className="w-3.5 h-3.5 text-white" />
-          : <Bot className="w-3.5 h-3.5 text-[rgb(var(--muted))]" />
+          : <Bot className="w-3.5 h-3.5 text-amber-400" />
         }
       </div>
 
@@ -41,7 +41,7 @@ function MessageBubble({ msg }: { msg: Message }) {
         className={clsx(
           "max-w-[72%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
           isUser
-            ? "bg-indigo-600 text-white rounded-br-sm"
+            ? "bg-gradient-to-br from-amber-600 to-amber-800 text-white rounded-br-sm shadow-[0_0_12px_rgba(245,158,11,0.2)]"
             : "bg-[rgb(var(--bubble-assistant))] text-[rgb(var(--fg))] border border-[rgb(var(--border))] rounded-bl-sm shadow-sm"
         )}
       >
@@ -108,9 +108,9 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
             {streaming.toolUses.map((t) => (
               <span
                 key={t.toolUseId}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 text-[10px] font-medium border border-indigo-100 dark:border-indigo-900"
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 text-[10px] font-medium border border-amber-500/20"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
                 {t.toolName}
                 {t.result && <span className="text-emerald-500 ml-0.5">✓</span>}
               </span>

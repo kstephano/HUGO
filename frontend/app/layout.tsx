@@ -1,21 +1,21 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-space",
   display: "swap",
 });
 
 export const metadata: Metadata = {
   title: "Hugo",
-  description: "Conversational AI assistant",
+  description: "Heuristic Universal Generative Oracle",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={spaceGrotesk.variable}>
       <body className="font-sans antialiased">{children}</body>
     </html>
   );

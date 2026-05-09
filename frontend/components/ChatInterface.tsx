@@ -51,7 +51,6 @@ export function ChatInterface({ conversationId }: Props) {
       case "done":
         finalizeStreaming();
         setIsStreaming(false);
-        // Synthetic message for display — full message fetched on next load
         appendMessage({
           id: frame.message_id,
           conversationId,
@@ -90,7 +89,7 @@ export function ChatInterface({ conversationId }: Props) {
     return () => ws.destroy();
   }, [conversationId]);
 
-  // Auto-grow the textarea
+  // Auto-grow textarea
   useEffect(() => {
     const el = textareaRef.current;
     if (!el) return;
@@ -101,9 +100,7 @@ export function ChatInterface({ conversationId }: Props) {
   const handleSend = () => {
     const content = input.trim();
     if (!content || isStreaming) return;
-
     const clientMessageId = uuid();
-    // Optimistic user message
     appendMessage({
       id: clientMessageId,
       conversationId,
@@ -117,7 +114,6 @@ export function ChatInterface({ conversationId }: Props) {
       cacheWriteTokens: 0,
       createdAt: new Date().toISOString(),
     });
-
     wsRef.current?.sendMessage(content, clientMessageId);
     setInput("");
     setIsStreaming(true);
@@ -146,15 +142,21 @@ export function ChatInterface({ conversationId }: Props) {
                 handleSend();
               }
             }}
-            placeholder="Message Hugo…"
+            placeholder="Ask Hugo anything…"
             rows={1}
             disabled={isStreaming}
-            className="flex-1 resize-none rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] text-[rgb(var(--fg))] placeholder:text-[rgb(var(--muted))] px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition overflow-hidden disabled:opacity-50"
+            className="flex-1 resize-none rounded-xl border border-[rgb(var(--border))]
+              bg-[rgb(var(--bg))] text-[rgb(var(--fg))]
+              placeholder:text-[rgb(var(--muted))]
+              px-4 py-2.5 text-sm
+              focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500/40
+              transition-all overflow-hidden disabled:opacity-40"
           />
           {isStreaming ? (
             <button
               onClick={handleCancel}
-              className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-red-500 hover:bg-red-400 text-white transition-colors"
+              className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl
+                bg-red-500/90 hover:bg-red-400 text-white transition-colors"
               aria-label="Stop"
             >
               <Square className="w-4 h-4 fill-current" />
@@ -163,15 +165,21 @@ export function ChatInterface({ conversationId }: Props) {
             <button
               onClick={handleSend}
               disabled={!input.trim()}
-              className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 disabled:cursor-not-allowed text-white transition-colors"
+              className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl
+                bg-gradient-to-br from-amber-500 to-amber-700
+                hover:from-amber-400 hover:to-amber-600
+                disabled:opacity-30 disabled:cursor-not-allowed
+                text-white transition-all
+                shadow-[0_0_14px_rgba(245,158,11,0.3)]
+                hover:shadow-[0_0_20px_rgba(245,158,11,0.5)]"
               aria-label="Send"
             >
               <Send className="w-4 h-4" />
             </button>
           )}
         </div>
-        <p className="text-center text-[10px] text-[rgb(var(--muted))] mt-2">
-          Enter to send · Shift+Enter for new line
+        <p className="text-center text-[10px] text-[rgb(var(--muted))] mt-2 tracking-wide">
+          Enter to send · Shift + Enter for new line
         </p>
       </div>
     </div>

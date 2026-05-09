@@ -4,44 +4,43 @@
 
 @layer base {
   :root {
-    --bg: 248 250 252;
-    --fg: 15 23 42;
-    --muted: 148 163 184;
-    --border: 226 232 240;
-    --sidebar-bg: 15 23 42;
-    --sidebar-fg: 226 232 240;
-    --sidebar-border: 30 41 59;
-    --bubble-user: 79 70 229;
-    --bubble-assistant: 255 255 255;
-    --input-bg: 255 255 255;
+    --bg: 3 7 18;
+    --fg: 226 232 240;
+    --muted: 71 85 105;
+    --border: 20 30 58;
+    --sidebar-bg: 2 4 14;
+    --sidebar-fg: 203 213 225;
+    --sidebar-border: 12 18 40;
+    --bubble-assistant: 7 12 30;
+    --input-bg: 5 9 22;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: 15 23 42;
-      --fg: 226 232 240;
-      --muted: 100 116 139;
-      --border: 30 41 59;
-      --sidebar-bg: 9 9 11;
-      --sidebar-fg: 226 232 240;
-      --sidebar-border: 24 24 27;
-      --bubble-user: 79 70 229;
-      --bubble-assistant: 30 41 59;
-      --input-bg: 22 32 52;
-    }
-  }
-
-  html { color-scheme: light dark; }
+  html { color-scheme: dark; }
 
   body {
     background-color: rgb(var(--bg));
+    /* Star field: subtle dot grid + two nebula glows */
+    background-image:
+      radial-gradient(ellipse 90% 60% at 8% 92%, rgba(59, 130, 246, 0.07) 0%, transparent 55%),
+      radial-gradient(ellipse 70% 50% at 92% 8%,  rgba(245, 158, 11, 0.06) 0%, transparent 55%),
+      radial-gradient(rgba(255, 255, 255, 0.10) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 64px 64px;
     color: rgb(var(--fg));
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 }
 
-/* Thought list item slide-in */
+/* ── Splash ─────────────────────────────────────────────────────── */
+@keyframes splash-letter {
+  from { opacity: 0; transform: translateY(6px); letter-spacing: 0.6em; }
+  to   { opacity: 1; transform: translateY(0);   letter-spacing: 0.35em; }
+}
+.animate-splash-letter {
+  animation: splash-letter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Thought list ───────────────────────────────────────────────── */
 @keyframes thought-in {
   from { opacity: 0; transform: translateY(-3px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -50,17 +49,17 @@
   animation: thought-in 0.2s ease forwards;
 }
 
-/* Thin scrollbars everywhere */
+/* ── Scrollbars ─────────────────────────────────────────────────── */
 .scrollbar-thin {
   scrollbar-width: thin;
-  scrollbar-color: rgb(var(--muted) / 0.35) transparent;
+  scrollbar-color: rgba(71, 85, 105, 0.3) transparent;
 }
 .scrollbar-thin::-webkit-scrollbar { width: 4px; }
 .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: rgb(var(--muted) / 0.35);
+  background: rgba(71, 85, 105, 0.3);
   border-radius: 99px;
 }
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: rgb(var(--muted) / 0.6);
+  background: rgba(71, 85, 105, 0.55);
 }

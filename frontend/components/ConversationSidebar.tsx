@@ -4,6 +4,21 @@ import { api } from "@/lib/api";
 import { Plus, Trash2, Bot } from "lucide-react";
 import clsx from "clsx";
 
+function AstronautLogo({ className = "" }: { className?: string }) {
+  return (
+    <div className={`relative flex-shrink-0 ${className}`}>
+      {/* Helmet shell */}
+      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-slate-500 via-slate-600 to-slate-800 shadow-[0_0_14px_rgba(245,158,11,0.35)]" />
+      {/* Visor glass */}
+      <div className="absolute inset-[2px] rounded-full bg-gradient-to-b from-amber-400/25 via-sky-900/30 to-slate-900/80" />
+      {/* Visor shine */}
+      <div className="absolute top-[3px] left-[4px] w-[35%] h-[25%] rounded-full bg-white/20 blur-[1px]" />
+      {/* Robot face */}
+      <Bot className="absolute inset-0 p-[5px] text-amber-300" />
+    </div>
+  );
+}
+
 export function ConversationSidebar() {
   const conversations = useStore((s) => s.conversations);
   const activeId = useStore((s) => s.activeConversationId);
@@ -42,18 +57,28 @@ export function ConversationSidebar() {
   return (
     <aside className="w-60 flex-shrink-0 flex flex-col h-full bg-[rgb(var(--sidebar-bg))] border-r border-[rgb(var(--sidebar-border))]">
       {/* Logo */}
-      <div className="flex items-center gap-2.5 px-4 py-4 border-b border-[rgb(var(--sidebar-border))]">
-        <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center flex-shrink-0">
-          <Bot className="w-4 h-4 text-white" />
+      <div className="flex items-center gap-3 px-4 py-4 border-b border-[rgb(var(--sidebar-border))]">
+        <AstronautLogo className="w-9 h-9" />
+        <div className="min-w-0">
+          <p className="text-[rgb(var(--sidebar-fg))] font-semibold tracking-[0.15em] text-sm leading-none">
+            HUGO
+          </p>
+          <p className="text-[9px] text-[rgb(var(--muted))] tracking-[0.2em] uppercase mt-0.5">
+            H · U · G · O
+          </p>
         </div>
-        <span className="text-[rgb(var(--sidebar-fg))] font-semibold tracking-tight">Hugo</span>
       </div>
 
       {/* New conversation */}
       <div className="p-3">
         <button
           onClick={handleNew}
-          className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg
+            bg-gradient-to-r from-amber-600 to-amber-700
+            hover:from-amber-500 hover:to-amber-600
+            text-white text-sm font-medium tracking-wide
+            transition-all shadow-[0_0_16px_rgba(245,158,11,0.2)]
+            hover:shadow-[0_0_20px_rgba(245,158,11,0.35)]"
         >
           <Plus className="w-4 h-4" />
           New chat
@@ -63,7 +88,7 @@ export function ConversationSidebar() {
       {/* Conversation list */}
       <nav className="flex-1 overflow-y-auto scrollbar-thin px-2 pb-2 space-y-0.5">
         {conversations.length === 0 && (
-          <p className="text-center text-[10px] text-[rgb(var(--muted))] mt-6 px-3">
+          <p className="text-center text-[10px] text-[rgb(var(--muted))] mt-8 px-3 leading-relaxed">
             No conversations yet
           </p>
         )}
@@ -72,16 +97,16 @@ export function ConversationSidebar() {
             key={conv.id}
             onClick={() => handleSelect(conv.id)}
             className={clsx(
-              "group flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer text-sm transition-colors",
+              "group flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer text-sm transition-all",
               activeId === conv.id
-                ? "bg-white/10 text-white"
-                : "text-[rgb(var(--muted))] hover:bg-white/5 hover:text-[rgb(var(--sidebar-fg))]"
+                ? "bg-amber-500/10 text-amber-300 border border-amber-500/20 shadow-[inset_0_0_12px_rgba(245,158,11,0.05)]"
+                : "text-[rgb(var(--muted))] hover:bg-white/5 hover:text-[rgb(var(--sidebar-fg))] border border-transparent"
             )}
           >
             <span className="truncate leading-snug">{conv.title ?? "New conversation"}</span>
             <button
               onClick={(e) => handleDelete(e, conv.id)}
-              className="opacity-0 group-hover:opacity-100 ml-2 flex-shrink-0 text-[rgb(var(--muted))] hover:text-red-400 transition-opacity"
+              className="opacity-0 group-hover:opacity-100 ml-2 flex-shrink-0 text-[rgb(var(--muted))] hover:text-red-400 transition-all"
               aria-label="Delete conversation"
             >
               <Trash2 className="w-3.5 h-3.5" />
