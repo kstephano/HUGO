@@ -77,12 +77,30 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
           </span>
         )}
 
-        {/* Extended thinking excerpt */}
-        {active && streaming.thinking && (
-          <p className="text-[11px] text-[rgb(var(--muted))] italic mb-2 border-l-2 border-[rgb(var(--border))] pl-2 line-clamp-2">
-            {streaming.thinking.slice(-300)}
-          </p>
-        )}
+        {/* Extended thinking — parsed into a high-level thought list */}
+        {active && streaming.thinking && (() => {
+          const thoughts = streaming.thinking
+            .split('\n')
+            .map((l) => l.trim())
+            .filter((l) => l.length > 15);
+          if (thoughts.length === 0) return null;
+          const done = thoughts.slice(0, -1);
+          const current = thoughts[thoughts.length - 1];
+          return (
+            <ul className="mb-2.5 space-y-1">
+              {done.map((t, i) => (
+                <li key={i} className="animate-thought-in flex items-start gap-1.5 text-[11px] text-[rgb(var(--muted))]">
+                  <span className="mt-px flex-shrink-0 text-emerald-500">✓</span>
+                  <span className="line-clamp-1">{t.slice(0, 90)}</span>
+                </li>
+              ))}
+              <li className="flex items-start gap-1.5 text-[11px] text-[rgb(var(--muted))] italic">
+                <span className="mt-1.5 w-1 h-1 flex-shrink-0 rounded-full bg-[rgb(var(--muted))] animate-pulse" />
+                <span className="line-clamp-1">{current.slice(0, 90)}</span>
+              </li>
+            </ul>
+          );
+        })()}
 
         {/* Tool-use badges */}
         {active && streaming.toolUses.length > 0 && (
