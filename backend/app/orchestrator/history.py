@@ -133,7 +133,16 @@ def build_messages(conversation: Conversation) -> list[dict]:
         if content is None:
             continue
 
-        if isinstance(content, (str, list, dict)):
+        if isinstance(content, str):
+            messages.append({"role": role, "content": content})
+        elif isinstance(content, list):
+            # Strip thinking blocks — Anthropic requires the original `signature`
+            # field to replay them, which we don't store. The model re-generates
+            # reasoning fresh each turn, so omitting them is correct.
+            filtered = [b for b in content if b.get("type") != "thinking"]
+            if filtered:
+                messages.append({"role": role, "content": filtered})
+        elif isinstance(content, dict):
             messages.append({"role": role, "content": content})
 
     return messages
