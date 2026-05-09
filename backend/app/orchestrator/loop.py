@@ -29,11 +29,12 @@ from app.llm.provider import (
 )
 from app.orchestrator.history import SYSTEM_PROMPT, build_messages, estimate_tokens
 from app.orchestrator.persistence import (
-    load_conversation, save_assistant_message, save_user_message, update_conversation_summary,
+    load_conversation, save_assistant_message, save_user_message,
+    set_conversation_title, update_conversation_summary,
 )
 from app.orchestrator.summarizer import maybe_summarize
 from app.schemas.websocket import (
-    WsDone, WsError, WsStreamDelta, WsThinkingDelta, WsToolResult, WsToolStart,
+    WsDone, WsError, WsStreamDelta, WsThinkingDelta, WsTitle, WsToolResult, WsToolStart,
 )
 from app.tools.registry import ToolRegistry
 
@@ -213,6 +214,11 @@ async def run_loop(
         cache_write_tokens=total_usage["cache_write"],
     )
     final_message_id = final_msg.id
+
+    # Auto-title on the first completed response
+    if final_status == "completed" and not conversation.title:
+        title = await set_conversation_title(db, conversation_id, user_content)
+        await send(WsTitle(title=title).model_dump_json())
 
     # Rolling summary
     if final_status == "completed":

@@ -13,6 +13,7 @@ interface ConversationsSlice {
   addConversation: (conv: Conversation) => void;
   removeConversation: (id: string) => void;
   setActiveConversation: (id: string | null) => void;
+  updateConversationTitle: (id: string, title: string) => void;
 }
 
 // ── Messages slice ─────────────────────────────────────────────────────────────
@@ -49,6 +50,10 @@ export const useStore = create<StoreState>((set, get) => ({
   removeConversation: (id) =>
     set((s) => ({ conversations: s.conversations.filter((c) => c.id !== id) })),
   setActiveConversation: (id) => set({ activeConversationId: id }),
+  updateConversationTitle: (id, title) =>
+    set((s) => ({
+      conversations: s.conversations.map((c) => c.id === id ? { ...c, title } : c),
+    })),
 
   // Messages
   messagesByConv: {},
@@ -68,19 +73,19 @@ export const useStore = create<StoreState>((set, get) => ({
   streaming: null,
   appendStreamDelta: (convId, text) =>
     set((s) => ({
-      streaming: s.streaming
+      streaming: (s.streaming && !s.streaming.isComplete)
         ? { ...s.streaming, text: s.streaming.text + text }
         : { conversationId: convId, text, thinking: "", toolUses: [], isComplete: false },
     })),
   appendThinkingDelta: (convId, text) =>
     set((s) => ({
-      streaming: s.streaming
+      streaming: (s.streaming && !s.streaming.isComplete)
         ? { ...s.streaming, thinking: s.streaming.thinking + text }
         : { conversationId: convId, text: "", thinking: text, toolUses: [], isComplete: false },
     })),
   addToolUse: (convId, toolUseId, toolName) =>
     set((s) => ({
-      streaming: s.streaming
+      streaming: (s.streaming && !s.streaming.isComplete)
         ? { ...s.streaming, toolUses: [...s.streaming.toolUses, { toolUseId, toolName }] }
         : { conversationId: convId, text: "", thinking: "", toolUses: [{ toolUseId, toolName }], isComplete: false },
     })),

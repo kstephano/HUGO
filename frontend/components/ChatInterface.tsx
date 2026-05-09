@@ -28,6 +28,7 @@ export function ChatInterface({ conversationId }: Props) {
   const setToolResult = useStore((s) => s.setToolResult);
   const finalizeStreaming = useStore((s) => s.finalizeStreaming);
   const appendMessage = useStore((s) => s.appendMessage);
+  const updateConversationTitle = useStore((s) => s.updateConversationTitle);
   const streaming = useStore((s) => s.streaming);
 
   // Keep ref in sync so the stale handleFrame closure always reads the current streaming state
@@ -64,6 +65,9 @@ export function ChatInterface({ conversationId }: Props) {
           cacheWriteTokens: frame.cache_write_tokens,
           createdAt: new Date().toISOString(),
         });
+        break;
+      case "title":
+        updateConversationTitle(conversationId, frame.title);
         break;
       case "error":
         setIsStreaming(false);

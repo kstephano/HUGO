@@ -59,3 +59,8 @@ class WsError(BaseModel):
 class WsRateLimited(BaseModel):
     type: Literal["rate_limited"] = "rate_limited"
     retry_after: int = 60
+
+
+class WsTitle(BaseModel):
+    type: Literal["title"] = "title"
+    title: str

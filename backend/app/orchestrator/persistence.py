@@ -76,3 +76,17 @@ async def update_conversation_summary(db: AsyncSession, conversation_id: str, su
         update(Conversation).where(Conversation.id == conversation_id).values(rolling_summary=summary)
     )
     await db.commit()
+
+
+async def set_conversation_title(db: AsyncSession, conversation_id: str, user_content: str) -> str:
+    """Generate a short title from the first user message and persist it."""
+    from sqlalchemy import update
+    words = user_content.split()
+    title = " ".join(words[:6])
+    if len(words) > 6:
+        title += "…"
+    await db.execute(
+        update(Conversation).where(Conversation.id == conversation_id).values(title=title)
+    )
+    await db.commit()
+    return title

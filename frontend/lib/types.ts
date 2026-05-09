@@ -45,7 +45,8 @@ export type WsFrame =
   | { type: "tool_result"; tool_use_id: string; content: string }
   | { type: "done"; message_id: string; input_tokens: number; output_tokens: number; cache_read_tokens: number; cache_write_tokens: number }
   | { type: "error"; code: string; message: string }
-  | { type: "rate_limited"; retry_after: number };
+  | { type: "rate_limited"; retry_after: number }
+  | { type: "title"; title: string };
 
 export type ConnectionStatus = "disconnected" | "connecting" | "connected" | "error";
 
