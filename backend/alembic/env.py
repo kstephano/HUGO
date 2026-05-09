@@ -15,8 +15,12 @@ if config.config_file_name is not None:
 
 target_metadata = Base.metadata
 
-# Allow DATABASE_URL env override (used in Docker)
+# Allow DATABASE_URL env override; normalise scheme for asyncpg
 db_url = os.environ.get("DATABASE_URL") or config.get_main_option("sqlalchemy.url")
+for _scheme in ("postgres://", "postgresql://"):
+    if db_url.startswith(_scheme):
+        db_url = db_url.replace(_scheme, "postgresql+asyncpg://", 1)
+        break
 config.set_main_option("sqlalchemy.url", db_url)
 
 
