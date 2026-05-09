@@ -3,7 +3,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 from sqlalchemy import (
-    DateTime, ForeignKey, Index, Integer, JSON, String, Text, Uuid, func,
+    Boolean, DateTime, ForeignKey, Index, Integer, JSON, String, Text, Uuid, func,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -30,6 +30,8 @@ class User(Base):
     id: Mapped[str] = mapped_column(_UUID, primary_key=True, default=lambda: str(uuid.uuid4()))
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     display_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    google_id: Mapped[str | None] = mapped_column(String(255), unique=True, nullable=True)
+    remember_conversations: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, server_default="true")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     conversations: Mapped[list[Conversation]] = relationship(back_populates="user")

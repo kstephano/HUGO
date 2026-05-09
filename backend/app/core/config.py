@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     # Session / auth
     session_secret: str = "change-me-in-production"
     session_ttl_seconds: int = 86400
+    google_client_id: str = ""
 
     # Rate limiting
     rate_limit_messages_per_minute: int = 60

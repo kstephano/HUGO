@@ -18,7 +18,11 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
 export const api = {
   auth: {
-    guest: () => request<User>("/api/auth/guest", { method: "POST" }),
+    google: (credential: string) =>
+      request<User>("/api/auth/google", {
+        method: "POST",
+        body: JSON.stringify({ credential }),
+      }),
     devLogin: (email: string, displayName: string) =>
       request<User>("/api/auth/dev-login", {
         method: "POST",
@@ -27,6 +31,11 @@ export const api = {
     me: () => request<User>("/api/auth/me"),
     logout: () => request<{ ok: boolean }>("/api/auth/logout", { method: "POST" }),
     wsTicket: () => request<{ ticket: string }>("/api/auth/ws-ticket"),
+    settings: (rememberConversations: boolean) =>
+      request<User>("/api/auth/settings", {
+        method: "PATCH",
+        body: JSON.stringify({ remember_conversations: rememberConversations }),
+      }),
   },
 
   conversations: {
@@ -40,6 +49,8 @@ export const api = {
     get: (id: string) => request<Conversation>(`/api/conversations/${id}`),
     delete: (id: string) =>
       fetch(`${BASE}/api/conversations/${id}`, { method: "DELETE", credentials: "include" }),
+    deleteAll: () =>
+      fetch(`${BASE}/api/conversations`, { method: "DELETE", credentials: "include" }),
   },
 
   messages: {

@@ -1,10 +1,12 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { useStore } from "@/lib/store";
 import { ConversationSidebar } from "@/components/ConversationSidebar";
 import { ChatInterface } from "@/components/ChatInterface";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { LoginPage } from "@/components/LoginPage";
+import type { User } from "@/lib/types";
 
 // ── Splash screen ─────────────────────────────────────────────────
 type SplashPhase = "show" | "exit" | "done";
@@ -26,14 +28,10 @@ function SplashScreen({ phase }: { phase: SplashPhase }) {
       }}
     >
       <div className="flex flex-col items-center gap-4">
-        <p
-          className="text-4xl font-light text-amber-400 tracking-[0.55em] animate-splash-letter"
-        >
+        <p className="text-4xl font-light text-amber-400 tracking-[0.55em] animate-splash-letter">
           H . U . G . O
         </p>
-        <p
-          className="text-[11px] font-light text-slate-500 uppercase tracking-[0.3em]"
-        >
+        <p className="text-[11px] font-light text-slate-500 uppercase tracking-[0.3em]">
           Heuristic Universal Generative Oracle
         </p>
       </div>
@@ -42,12 +40,13 @@ function SplashScreen({ phase }: { phase: SplashPhase }) {
 }
 
 // ── Main page ─────────────────────────────────────────────────────
-type BootState = "loading" | "ready" | "error";
+type BootState = "loading" | "ready" | "unauthenticated" | "error";
 
 export default function HomePage() {
   const [splash, setSplash] = useState<SplashPhase>("show");
   const [boot, setBoot] = useState<BootState>("loading");
 
+  const setUser = useStore((s) => s.setUser);
   const setConversations = useStore((s) => s.setConversations);
   const addConversation = useStore((s) => s.addConversation);
   const setActive = useStore((s) => s.setActiveConversation);
@@ -63,33 +62,58 @@ export default function HomePage() {
     return () => timers.forEach(clearTimeout);
   }, []);
 
-  // Boot sequence (runs in parallel with splash)
+  const loadConversations = useCallback(async (rememberConversations: boolean) => {
+    if (rememberConversations) {
+      const { items } = await api.conversations.list();
+      if (items.length > 0) {
+        setConversations(items);
+        setActive(items[0].id);
+        return;
+      }
+    }
+    const conv = await api.conversations.create();
+    addConversation(conv);
+    setActive(conv.id);
+  }, [setConversations, addConversation, setActive]);
+
+  const handleLoginSuccess = useCallback(async (user: User) => {
+    setUser(user);
+    setBoot("loading");
+    try {
+      await loadConversations(user.rememberConversations);
+      setBoot("ready");
+    } catch {
+      setBoot("error");
+    }
+  }, [setUser, loadConversations]);
+
+  // Boot sequence: check if already logged in
   useEffect(() => {
     (async () => {
       try {
-        await api.auth.me().catch(() => api.auth.guest());
-        const { items } = await api.conversations.list();
-        if (items.length > 0) {
-          setConversations(items);
-          setActive(items[0].id);
-        } else {
-          const conv = await api.conversations.create();
-          addConversation(conv);
-          setActive(conv.id);
-        }
+        const user = await api.auth.me();
+        setUser(user);
+        await loadConversations(user.rememberConversations);
         setBoot("ready");
-      } catch {
-        setBoot("error");
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : "";
+        if (msg.startsWith("401")) {
+          setBoot("unauthenticated");
+        } else {
+          setBoot("error");
+        }
       }
     })();
   }, []);
 
+  if (boot === "unauthenticated") {
+    return <LoginPage onSuccess={handleLoginSuccess} />;
+  }
+
   return (
     <>
-      {/* Splash overlay — renders on top while active */}
       {splash !== "done" && <SplashScreen phase={splash} />}
 
-      {/* App shell — mounts immediately so boot runs under the splash */}
       <div className="flex h-screen overflow-hidden bg-[rgb(var(--bg))]">
         {boot === "error" ? (
           <div className="flex-1 flex flex-col items-center justify-center gap-3 text-center px-6">
@@ -99,7 +123,6 @@ export default function HomePage() {
             </p>
           </div>
         ) : boot === "loading" ? (
-          /* Skeleton while booting — hidden under splash most of the time */
           <div className="flex-1 flex items-center justify-center">
             <span className="text-xs text-[rgb(var(--muted))] tracking-widest uppercase animate-pulse">
               Initialising…
@@ -108,12 +131,11 @@ export default function HomePage() {
         ) : (
           <>
             <ErrorBoundary>
-              <ConversationSidebar />
+              <ConversationSidebar onLogout={() => setBoot("unauthenticated")} />
             </ErrorBoundary>
             <main className="flex-1 flex flex-col overflow-hidden">
               {activeId && (
                 <ErrorBoundary>
-                  {/* Status bar */}
                   <div className="flex items-center gap-2 px-4 py-2 border-b border-[rgb(var(--border))] bg-[rgb(var(--input-bg))/60]">
                     <span
                       className={`w-1.5 h-1.5 rounded-full transition-colors ${

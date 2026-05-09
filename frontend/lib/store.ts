@@ -3,7 +3,13 @@
  * Each slice is a self-contained set of state + actions.
  */
 import { create } from "zustand";
-import type { Conversation, ConnectionStatus, Message, StreamingMessage } from "./types";
+import type { Conversation, ConnectionStatus, Message, StreamingMessage, User } from "./types";
+
+// ── User slice ─────────────────────────────────────────────────────────────────
+interface UserSlice {
+  user: User | null;
+  setUser: (user: User | null) => void;
+}
 
 // ── Conversations slice ────────────────────────────────────────────────────────
 interface ConversationsSlice {
@@ -39,9 +45,13 @@ interface StreamingSlice {
   finalizeStreaming: () => void;
 }
 
-type StoreState = ConversationsSlice & MessagesSlice & ConnectionSlice & StreamingSlice;
+type StoreState = UserSlice & ConversationsSlice & MessagesSlice & ConnectionSlice & StreamingSlice;
 
 export const useStore = create<StoreState>((set, get) => ({
+  // User
+  user: null,
+  setUser: (user) => set({ user }),
+
   // Conversations
   conversations: [],
   activeConversationId: null,

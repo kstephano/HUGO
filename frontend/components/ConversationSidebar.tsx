@@ -1,20 +1,43 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useStore } from "@/lib/store";
 import { api } from "@/lib/api";
-import { Plus, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Plus, Trash2, ChevronLeft, ChevronRight,
+  Settings, LogOut, Trash, ToggleLeft, ToggleRight,
+} from "lucide-react";
 import clsx from "clsx";
 
-export function ConversationSidebar() {
+interface Props {
+  onLogout: () => void;
+}
+
+export function ConversationSidebar({ onLogout }: Props) {
   const [collapsed, setCollapsed] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const settingsRef = useRef<HTMLDivElement>(null);
 
   const conversations = useStore((s) => s.conversations);
   const activeId = useStore((s) => s.activeConversationId);
+  const user = useStore((s) => s.user);
+  const setUser = useStore((s) => s.setUser);
   const setActive = useStore((s) => s.setActiveConversation);
   const addConversation = useStore((s) => s.addConversation);
   const removeConversation = useStore((s) => s.removeConversation);
+  const setConversations = useStore((s) => s.setConversations);
   const setMessages = useStore((s) => s.setMessages);
+
+  // Close settings panel on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (settingsRef.current && !settingsRef.current.contains(e.target as Node)) {
+        setSettingsOpen(false);
+      }
+    };
+    if (settingsOpen) document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [settingsOpen]);
 
   const handleNew = async () => {
     try {
@@ -43,6 +66,40 @@ export function ConversationSidebar() {
     if (activeId === id) setActive(null);
   };
 
+  const handleClearAll = async () => {
+    await api.conversations.deleteAll();
+    setConversations([]);
+    setActive(null);
+    setSettingsOpen(false);
+    // Start a fresh conversation
+    try {
+      const conv = await api.conversations.create();
+      addConversation(conv);
+      setActive(conv.id);
+    } catch {}
+  };
+
+  const handleToggleRemember = async () => {
+    if (!user) return;
+    const next = !user.rememberConversations;
+    try {
+      const updated = await api.auth.settings(next);
+      setUser(updated);
+    } catch (e) {
+      console.error("settings_update_error", e);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await api.auth.logout();
+    } catch {}
+    setUser(null);
+    setConversations([]);
+    setActive(null);
+    onLogout();
+  };
+
   return (
     <aside
       className={clsx(
@@ -53,38 +110,31 @@ export function ConversationSidebar() {
     >
       {/* Header: logo + collapse toggle */}
       <div className="flex items-center border-b border-[rgb(var(--sidebar-border))] flex-shrink-0">
-        {/* Logo area — always visible */}
         <div
           className={clsx(
             "flex items-center gap-3 py-4 transition-all duration-300 min-w-0",
-            collapsed ? "px-[11px]" : "px-4 flex-1"
+            collapsed ? "px-[9px]" : "px-4 flex-1"
           )}
         >
           <Image
-              src="/images/hugo-logo.png"
-              alt="Hugo"
-              width={36}
-              height={36}
-              className="flex-shrink-0 rounded-full"
-            />
+            src="/images/hugo-logo.png"
+            alt="Hugo"
+            width={40}
+            height={40}
+            className="flex-shrink-0 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.2)]"
+          />
           {!collapsed && (
-            <div className="min-w-0 overflow-hidden">
-              <p className="text-[rgb(var(--sidebar-fg))] font-semibold tracking-[0.15em] text-sm leading-none whitespace-nowrap">
-                HUGO
-              </p>
-              <p className="text-[9px] text-[rgb(var(--muted))] tracking-[0.2em] uppercase mt-0.5 whitespace-nowrap">
-                H · U · G · O
-              </p>
-            </div>
+            <p className="text-[rgb(var(--sidebar-fg))] font-semibold tracking-[0.15em] text-sm leading-none whitespace-nowrap">
+              HUGO
+            </p>
           )}
         </div>
 
-        {/* Collapse toggle */}
         <button
           onClick={() => setCollapsed((c) => !c)}
           className={clsx(
             "flex-shrink-0 flex items-center justify-center text-[rgb(var(--muted))] hover:text-[rgb(var(--sidebar-fg))] transition-colors",
-            collapsed ? "w-14 h-[61px]" : "w-8 h-[61px] mr-1"
+            collapsed ? "w-14 h-[65px]" : "w-8 h-[65px] mr-1"
           )}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
@@ -158,7 +208,7 @@ export function ConversationSidebar() {
         </nav>
       )}
 
-      {/* Collapsed: show active conversation indicator dots */}
+      {/* Collapsed: dot indicators */}
       {collapsed && conversations.length > 0 && (
         <div className="flex-1 flex flex-col items-center pt-2 gap-1.5 overflow-hidden">
           {conversations.slice(0, 8).map((conv) => (
@@ -176,6 +226,81 @@ export function ConversationSidebar() {
           ))}
         </div>
       )}
+
+      {/* Bottom: settings panel + user bar */}
+      <div className="flex-shrink-0 border-t border-[rgb(var(--sidebar-border))]" ref={settingsRef}>
+
+        {/* Settings panel (expanded only) */}
+        {!collapsed && settingsOpen && (
+          <div className="px-3 py-3 space-y-2 border-b border-[rgb(var(--sidebar-border))]">
+            {/* Remember conversations toggle */}
+            <button
+              onClick={handleToggleRemember}
+              className="w-full flex items-center justify-between gap-2 px-2 py-1.5 rounded-lg
+                text-[rgb(var(--muted))] hover:text-[rgb(var(--sidebar-fg))] hover:bg-white/5 transition-all text-xs"
+            >
+              <span>Remember conversations</span>
+              {user?.rememberConversations
+                ? <ToggleRight className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                : <ToggleLeft className="w-4 h-4 flex-shrink-0" />
+              }
+            </button>
+
+            {/* Clear all chats */}
+            <button
+              onClick={handleClearAll}
+              className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg
+                text-[rgb(var(--muted))] hover:text-red-400 hover:bg-red-500/5 transition-all text-xs"
+            >
+              <Trash className="w-3.5 h-3.5 flex-shrink-0" />
+              Clear all chats
+            </button>
+          </div>
+        )}
+
+        {/* User info bar */}
+        <div className={clsx("flex items-center gap-2", collapsed ? "flex-col py-3 px-2" : "px-3 py-3")}>
+          {!collapsed && (
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-[rgb(var(--sidebar-fg))] truncate leading-none">
+                {user?.displayName ?? ""}
+              </p>
+              <p className="text-[10px] text-[rgb(var(--muted))] truncate mt-0.5">
+                {user?.email ?? ""}
+              </p>
+            </div>
+          )}
+
+          {/* Settings toggle */}
+          <button
+            onClick={() => !collapsed && setSettingsOpen((o) => !o)}
+            title="Settings"
+            className={clsx(
+              "flex-shrink-0 flex items-center justify-center rounded-lg transition-colors",
+              "text-[rgb(var(--muted))] hover:text-[rgb(var(--sidebar-fg))]",
+              collapsed ? "w-10 h-10" : "w-7 h-7",
+              settingsOpen && !collapsed && "text-amber-400"
+            )}
+            aria-label="Settings"
+          >
+            <Settings className="w-3.5 h-3.5" />
+          </button>
+
+          {/* Sign out */}
+          <button
+            onClick={handleLogout}
+            title="Sign out"
+            className={clsx(
+              "flex-shrink-0 flex items-center justify-center rounded-lg transition-colors",
+              "text-[rgb(var(--muted))] hover:text-red-400",
+              collapsed ? "w-10 h-10" : "w-7 h-7"
+            )}
+            aria-label="Sign out"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
     </aside>
   );
 }

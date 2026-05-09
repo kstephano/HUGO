@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import { useStore } from "@/lib/store";
-import { Bot, User } from "lucide-react";
+import { User } from "lucide-react";
 import type { Message } from "@/lib/types";
 import clsx from "clsx";
 
@@ -24,15 +25,15 @@ function MessageBubble({ msg }: { msg: Message }) {
       {/* Avatar */}
       <div
         className={clsx(
-          "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center",
+          "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center overflow-hidden",
           isUser
             ? "bg-gradient-to-br from-amber-500 to-amber-700 shadow-[0_0_8px_rgba(245,158,11,0.4)]"
-            : "bg-[rgb(var(--border))]"
+            : ""
         )}
       >
         {isUser
           ? <User className="w-3.5 h-3.5 text-white" />
-          : <Bot className="w-3.5 h-3.5 text-amber-400" />
+          : <Image src="/images/hugo-logo.png" alt="Hugo" width={28} height={28} className="rounded-full" />
         }
       </div>
 
@@ -62,8 +63,8 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
   return (
     <div className="flex items-end gap-2.5">
       {/* Avatar */}
-      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[rgb(var(--border))] flex items-center justify-center">
-        <Bot className="w-3.5 h-3.5 text-[rgb(var(--muted))]" />
+      <div className="flex-shrink-0 w-7 h-7 rounded-full overflow-hidden">
+        <Image src="/images/hugo-logo.png" alt="Hugo" width={28} height={28} className="rounded-full" />
       </div>
 
       {/* Bubble */}

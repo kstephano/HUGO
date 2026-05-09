@@ -2,7 +2,7 @@
 from __future__ import annotations
 import uuid
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import func, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from app.core.dependencies import get_current_user_id, get_db
@@ -11,6 +11,16 @@ from app.schemas.conversations import ConversationCreate, ConversationList, Conv
 from app.schemas.messages import MessageList, MessageOut
 
 router = APIRouter(prefix="/conversations", tags=["conversations"])
+
+
+@router.delete("", status_code=204)
+async def delete_all_conversations(
+    user_id: str = Depends(get_current_user_id),
+    db: AsyncSession = Depends(get_db),
+):
+    """Delete all conversations belonging to the current user."""
+    await db.execute(delete(Conversation).where(Conversation.user_id == user_id))
+    await db.commit()
 
 
 @router.post("", response_model=ConversationOut, status_code=201)

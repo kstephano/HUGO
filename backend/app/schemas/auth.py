@@ -8,7 +8,16 @@ class DevLoginRequest(CamelModel):
     display_name: str = "Dev User"
 
 
+class GoogleLoginRequest(CamelModel):
+    credential: str
+
+
+class SettingsUpdateRequest(CamelModel):
+    remember_conversations: bool
+
+
 class SessionResponse(CamelModel):
     user_id: str
     email: str
     display_name: str
+    remember_conversations: bool = True
