@@ -28,6 +28,10 @@ export function ChatInterface({ conversationId }: Props) {
   const appendMessage = useStore((s) => s.appendMessage);
   const streaming = useStore((s) => s.streaming);
 
+  // Keep ref in sync so the stale handleFrame closure always reads the current streaming state
+  const streamingRef = useRef(streaming);
+  streamingRef.current = streaming;
+
   const handleFrame = (frame: WsFrame) => {
     switch (frame.type) {
       case "delta":
@@ -37,26 +41,26 @@ export function ChatInterface({ conversationId }: Props) {
         appendThinkingDelta(conversationId, frame.text);
         break;
       case "tool_start":
-        addToolUse(conversationId, frame.toolUseId, frame.toolName);
+        addToolUse(conversationId, frame.tool_use_id, frame.tool_name);
         break;
       case "tool_result":
-        setToolResult(conversationId, frame.toolUseId, frame.content);
+        setToolResult(conversationId, frame.tool_use_id, frame.content);
         break;
       case "done":
         finalizeStreaming();
         setIsStreaming(false);
         // Synthetic message for display — full message fetched on next load
         appendMessage({
-          id: frame.messageId,
+          id: frame.message_id,
           conversationId,
           role: "assistant",
-          content: streaming?.text ?? "",
+          content: streamingRef.current?.text ?? "",
           toolCalls: null,
           status: "completed",
-          inputTokens: frame.inputTokens,
-          outputTokens: frame.outputTokens,
-          cacheReadTokens: frame.cacheReadTokens,
-          cacheWriteTokens: frame.cacheWriteTokens,
+          inputTokens: frame.input_tokens,
+          outputTokens: frame.output_tokens,
+          cacheReadTokens: frame.cache_read_tokens,
+          cacheWriteTokens: frame.cache_write_tokens,
           createdAt: new Date().toISOString(),
         });
         break;
@@ -117,7 +121,7 @@ export function ChatInterface({ conversationId }: Props) {
 
   return (
     <div className="flex flex-col h-full">
-      <MessageList conversationId={conversationId} />
+      <MessageList conversationId={conversationId} isPending={isStreaming} />
 
       <div className="border-t border-slate-200 p-4 bg-white">
         <div className="flex gap-3 items-end">

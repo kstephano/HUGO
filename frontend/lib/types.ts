@@ -37,15 +37,15 @@ export interface ContentBlock {
   content?: string;
 }
 
-// WebSocket frame types
+// WebSocket frame types — field names match the backend's snake_case JSON output
 export type WsFrame =
   | { type: "delta"; text: string }
   | { type: "thinking"; text: string }
-  | { type: "tool_start"; toolName: string; toolUseId: string }
-  | { type: "tool_result"; toolUseId: string; content: string }
-  | { type: "done"; messageId: string; inputTokens: number; outputTokens: number; cacheReadTokens: number; cacheWriteTokens: number }
+  | { type: "tool_start"; tool_name: string; tool_use_id: string }
+  | { type: "tool_result"; tool_use_id: string; content: string }
+  | { type: "done"; message_id: string; input_tokens: number; output_tokens: number; cache_read_tokens: number; cache_write_tokens: number }
   | { type: "error"; code: string; message: string }
-  | { type: "rate_limited"; retryAfter: number };
+  | { type: "rate_limited"; retry_after: number };
 
 export type ConnectionStatus = "disconnected" | "connecting" | "connected" | "error";
 

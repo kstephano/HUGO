@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     anthropic_max_tokens: int = 4096
     anthropic_thinking_budget: int = 2048
 
+    # Brave Search
+    brave_search_api_key: str = ""
+
     # Voyage AI
     voyage_api_key: str = ""
     voyage_model: str = "voyage-3"

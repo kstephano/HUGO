@@ -23,7 +23,9 @@ class ToolRegistry:
 def build_default_registry() -> ToolRegistry:
     from app.tools.time_tool import TimeTool
     from app.tools.search_tool import SearchTool
+    from app.tools.web_search_tool import WebSearchTool
     registry = ToolRegistry()
     registry.register(TimeTool())
     registry.register(SearchTool())
+    registry.register(WebSearchTool())
     return registry
