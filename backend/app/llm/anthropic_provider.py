@@ -43,24 +43,18 @@ class AnthropicProvider:
                 t["cache_control"] = {"type": "ephemeral"}
             cached_tools.append(t)
 
-        # Extended thinking: only enabled when budget > 0.
-        # Requires temperature=1.0 — the Anthropic API rejects other values when thinking is on.
-        if self._thinking_budget > 0:
-            thinking_param = {"type": "enabled", "budget_tokens": self._thinking_budget}
-            temperature = 1.0
-        else:
-            thinking_param = anthropic.NOT_GIVEN
-            temperature = anthropic.NOT_GIVEN
-
         stream_kwargs = dict(
             model=self._model,
             max_tokens=self._max_tokens,
-            temperature=temperature,
-            thinking=thinking_param,
             system=system_block,
             tools=cached_tools or anthropic.NOT_GIVEN,
             messages=messages,
         )
+
+        # Extended thinking requires temperature=1.0 — only add both when budget > 0.
+        if self._thinking_budget > 0:
+            stream_kwargs["temperature"] = 1.0
+            stream_kwargs["thinking"] = {"type": "enabled", "budget_tokens": self._thinking_budget}
 
         tool_inputs: dict[str, dict] = {}
         tool_names: dict[str, str] = {}

@@ -143,7 +143,7 @@ async def websocket_endpoint(
                     )
                 except Exception as exc:
                     log.error("ws_loop_error", error=str(exc), conversation_id=conversation_id)
-                    await send(WsError(code="loop_error", message="Internal error").model_dump_json())
+                    await send(WsError(code="loop_error", message=str(exc)).model_dump_json())
 
             else:
                 await send(WsError(code="unknown_type", message=f"Unknown frame type: {ftype}").model_dump_json())
