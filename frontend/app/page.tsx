@@ -7,7 +7,7 @@ import { ChatInterface } from "@/components/ChatInterface";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 // ── Splash screen ─────────────────────────────────────────────────
-type SplashPhase = "name" | "acronym" | "exit" | "done";
+type SplashPhase = "show" | "exit" | "done";
 
 function SplashScreen({ phase }: { phase: SplashPhase }) {
   return (
@@ -25,37 +25,14 @@ function SplashScreen({ phase }: { phase: SplashPhase }) {
         backgroundSize: "100% 100%, 100% 100%, 64px 64px",
       }}
     >
-      {/* HUGO name */}
-      <div
-        className={`absolute flex flex-col items-center gap-2 transition-opacity duration-300 ${
-          phase === "name" ? "opacity-100" : "opacity-0"
-        }`}
-      >
+      <div className="flex flex-col items-center gap-4">
         <p
-          className={`text-7xl font-bold text-white ${
-            phase === "name" ? "animate-splash-letter" : ""
-          }`}
-          style={{ letterSpacing: "0.35em" }}
+          className="text-4xl font-light text-amber-400 tracking-[0.55em] animate-splash-letter"
         >
-          HUGO
-        </p>
-      </div>
-
-      {/* Acronym */}
-      <div
-        className={`absolute flex flex-col items-center gap-3 transition-opacity duration-300 ${
-          phase === "acronym" ? "opacity-100" : "opacity-0"
-        }`}
-      >
-        <p
-          className="text-2xl font-light text-amber-400"
-          style={{ letterSpacing: "0.6em" }}
-        >
-          H · U · G · O
+          H . U . G . O
         </p>
         <p
-          className="text-[11px] font-light text-slate-500 uppercase"
-          style={{ letterSpacing: "0.25em" }}
+          className="text-[11px] font-light text-slate-500 uppercase tracking-[0.3em]"
         >
           Heuristic Universal Generative Oracle
         </p>
@@ -68,7 +45,7 @@ function SplashScreen({ phase }: { phase: SplashPhase }) {
 type BootState = "loading" | "ready" | "error";
 
 export default function HomePage() {
-  const [splash, setSplash] = useState<SplashPhase>("name");
+  const [splash, setSplash] = useState<SplashPhase>("show");
   const [boot, setBoot] = useState<BootState>("loading");
 
   const setConversations = useStore((s) => s.setConversations);
@@ -77,12 +54,11 @@ export default function HomePage() {
   const activeId = useStore((s) => s.activeConversationId);
   const connectionStatus = useStore((s) => s.connectionStatus);
 
-  // Splash timing (independent of boot)
+  // Splash timing: show for 1.5s, fade over 0.5s, then unmount
   useEffect(() => {
     const timers = [
-      setTimeout(() => setSplash("acronym"), 600),
-      setTimeout(() => setSplash("exit"),    1200),
-      setTimeout(() => setSplash("done"),    1700),
+      setTimeout(() => setSplash("exit"), 1500),
+      setTimeout(() => setSplash("done"), 2000),
     ];
     return () => timers.forEach(clearTimeout);
   }, []);
