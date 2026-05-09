@@ -1,20 +1,10 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 import { useStore } from "@/lib/store";
 import { api } from "@/lib/api";
-import { Plus, Trash2, Bot, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import clsx from "clsx";
-
-function AstronautLogo({ className = "" }: { className?: string }) {
-  return (
-    <div className={`relative flex-shrink-0 ${className}`}>
-      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-slate-500 via-slate-600 to-slate-800 shadow-[0_0_14px_rgba(245,158,11,0.35)]" />
-      <div className="absolute inset-[2px] rounded-full bg-gradient-to-b from-amber-400/25 via-sky-900/30 to-slate-900/80" />
-      <div className="absolute top-[3px] left-[4px] w-[35%] h-[25%] rounded-full bg-white/20 blur-[1px]" />
-      <Bot className="absolute inset-0 p-[5px] text-amber-300" />
-    </div>
-  );
-}
 
 export function ConversationSidebar() {
   const [collapsed, setCollapsed] = useState(false);
@@ -70,7 +60,13 @@ export function ConversationSidebar() {
             collapsed ? "px-[11px]" : "px-4 flex-1"
           )}
         >
-          <AstronautLogo className="w-9 h-9 flex-shrink-0" />
+          <Image
+              src="/images/hugo-logo.png"
+              alt="Hugo"
+              width={36}
+              height={36}
+              className="flex-shrink-0 rounded-full"
+            />
           {!collapsed && (
             <div className="min-w-0 overflow-hidden">
               <p className="text-[rgb(var(--sidebar-fg))] font-semibold tracking-[0.15em] text-sm leading-none whitespace-nowrap">
