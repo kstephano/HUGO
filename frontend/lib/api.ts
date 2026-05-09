@@ -1,7 +1,9 @@
 /** Typed REST API client — thin wrappers around fetch with error handling. */
 import type { Conversation, Message, User } from "./types";
 
-const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const BASE = typeof window === "undefined"
+  ? (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000")
+  : "";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const resp = await fetch(`${BASE}${path}`, {
