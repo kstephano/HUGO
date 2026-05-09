@@ -1,6 +1,6 @@
 """
 Anthropic streaming provider.
-Uses extended thinking (budget_tokens=2048) with temperature=1.0.
+Extended thinking is enabled only when ANTHROPIC_THINKING_BUDGET > 0.
 Prompt caching is applied to the system prompt and tool definitions via cache_control.
 """
 from __future__ import annotations
@@ -43,12 +43,20 @@ class AnthropicProvider:
                 t["cache_control"] = {"type": "ephemeral"}
             cached_tools.append(t)
 
-        # Extended thinking requires temperature=1.0 — the Anthropic API rejects other values
+        # Extended thinking: only enabled when budget > 0.
+        # Requires temperature=1.0 — the Anthropic API rejects other values when thinking is on.
+        if self._thinking_budget > 0:
+            thinking_param = {"type": "enabled", "budget_tokens": self._thinking_budget}
+            temperature = 1.0
+        else:
+            thinking_param = anthropic.NOT_GIVEN
+            temperature = anthropic.NOT_GIVEN
+
         stream_kwargs = dict(
             model=self._model,
             max_tokens=self._max_tokens,
-            temperature=1.0,
-            thinking={"type": "enabled", "budget_tokens": self._thinking_budget},
+            temperature=temperature,
+            thinking=thinking_param,
             system=system_block,
             tools=cached_tools or anthropic.NOT_GIVEN,
             messages=messages,

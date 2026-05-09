@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     anthropic_api_key: str = ""
     anthropic_model: str = "claude-sonnet-4-5"
     anthropic_max_tokens: int = 4096
-    anthropic_thinking_budget: int = 2048
+    anthropic_thinking_budget: int = 0  # 0 = disabled; set >0 to enable extended thinking
 
     # Brave Search
     brave_search_api_key: str = ""
