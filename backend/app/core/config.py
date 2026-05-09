@@ -54,6 +54,16 @@ class Settings(BaseSettings):
     def allowed_origins_list(self) -> list[str]:
         return [o.strip() for o in self.allowed_origins.split(",")]
 
+    @property
+    def async_database_url(self) -> str:
+        # Railway (and most providers) give postgres:// or postgresql:// — neither
+        # works with asyncpg. Normalise to postgresql+asyncpg:// unconditionally.
+        url = self.database_url
+        for scheme in ("postgres://", "postgresql://"):
+            if url.startswith(scheme):
+                return url.replace(scheme, "postgresql+asyncpg://", 1)
+        return url
+
 
 @lru_cache
 def get_settings() -> Settings:

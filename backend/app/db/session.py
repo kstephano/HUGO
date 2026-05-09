@@ -6,7 +6,7 @@ from app.core.config import get_settings
 settings = get_settings()
 
 engine = create_async_engine(
-    settings.database_url,
+    settings.async_database_url,
     echo=settings.db_echo,
     poolclass=NullPool,
     # NullPool ignores pool_size/max_overflow — swap to AsyncAdaptedQueuePool
