@@ -45,7 +45,7 @@ async def dev_login(
         key="session_token",
         value=token,
         httponly=True,
-        samesite="lax",
+        samesite="none" if settings.production else "lax",
         max_age=settings.session_ttl_seconds,
         secure=settings.production,
     )
