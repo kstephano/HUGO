@@ -27,6 +27,7 @@ export const api = {
       }),
     me: () => request<User>("/api/auth/me"),
     logout: () => request<{ ok: boolean }>("/api/auth/logout", { method: "POST" }),
+    wsTicket: () => request<{ ticket: string }>("/api/auth/ws-ticket"),
   },
 
   conversations: {

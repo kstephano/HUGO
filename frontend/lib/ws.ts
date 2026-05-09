@@ -3,6 +3,7 @@
  * Maintains a single connection per browser tab.
  */
 import type { WsFrame } from "./types";
+import { api } from "./api";
 
 const WS_BASE = process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:8000";
 const MAX_RETRIES = 8;
@@ -27,10 +28,17 @@ export class HugoWebSocket {
     this.statusHandler = onStatus;
   }
 
-  connect() {
+  async connect() {
     if (this.destroyed || this.ws?.readyState === WebSocket.OPEN) return;
     this.onStatus("connecting");
-    const ws = new WebSocket(`${WS_BASE}/ws`);
+    let wsUrl = `${WS_BASE}/ws`;
+    try {
+      const { ticket } = await api.auth.wsTicket();
+      wsUrl = `${WS_BASE}/ws?ticket=${ticket}`;
+    } catch {
+      // proceed without ticket — will fail auth if cookie is cross-origin
+    }
+    const ws = new WebSocket(wsUrl);
     this.ws = ws;
 
     ws.onopen = () => {

@@ -63,6 +63,20 @@ async def logout(
     return {"ok": True}
 
 
+@router.get("/ws-ticket")
+async def ws_ticket(
+    user_id: str = Depends(get_current_user_id),
+    redis=Depends(get_redis_dep),
+):
+    """Issue a short-lived one-time ticket for WebSocket auth (cross-origin proxy workaround)."""
+    ticket = secrets.token_urlsafe(32)
+    try:
+        await redis.setex(f"ws_ticket:{ticket}", 60, user_id)
+    except Exception:
+        raise HTTPException(status_code=503, detail="Session store unavailable")
+    return {"ticket": ticket}
+
+
 @router.get("/me", response_model=SessionResponse)
 async def me(
     user_id: str = Depends(get_current_user_id),

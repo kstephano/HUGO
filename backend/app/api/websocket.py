@@ -10,7 +10,7 @@ Protocol:
 """
 from __future__ import annotations
 import json
-from fastapi import APIRouter, Cookie, Depends, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Cookie, Depends, Query, WebSocket, WebSocketDisconnect
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.cancel_bus import publish_cancel
 from app.core.config import get_settings
@@ -50,22 +50,25 @@ def _get_providers():
 async def websocket_endpoint(
     websocket: WebSocket,
     session_token: str | None = Cookie(default=None),
+    ticket: str | None = Query(default=None),
     db: AsyncSession = Depends(get_db),
     redis=Depends(get_redis_dep),
 ):
-    # Auth: validate session cookie before accepting
-    if not session_token:
-        await websocket.close(code=4001, reason="Not authenticated")
-        return
-
+    # Auth: try session cookie first, then one-time WS ticket
+    user_id = None
     try:
-        user_id = await redis.get(f"session:{session_token}")
+        if session_token:
+            user_id = await redis.get(f"session:{session_token}")
+        if not user_id and ticket:
+            user_id = await redis.get(f"ws_ticket:{ticket}")
+            if user_id:
+                await redis.delete(f"ws_ticket:{ticket}")
     except Exception:
         await websocket.close(code=4503, reason="Session store unavailable")
         return
 
     if not user_id:
-        await websocket.close(code=4001, reason="Session expired")
+        await websocket.close(code=4001, reason="Not authenticated")
         return
 
     await websocket.accept()
