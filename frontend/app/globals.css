@@ -17,10 +17,12 @@
 
   html {
     color-scheme: dark;
+    height: -webkit-fill-available; /* iOS Safari fallback */
     height: 100%;
   }
 
   body {
+    height: -webkit-fill-available; /* iOS Safari fallback */
     height: 100%;
     overflow: hidden;
     background: url('/images/space-background.png') center / cover no-repeat fixed;
