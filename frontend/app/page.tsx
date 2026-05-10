@@ -21,6 +21,13 @@ function SplashScreen({ phase }: { phase: SplashPhase }) {
       }`}
     >
       <div className="flex flex-col items-center gap-4">
+        <Image
+          src="/images/hugo-logo.png"
+          alt="Hugo"
+          width={72}
+          height={72}
+          className="rounded-full shadow-[0_0_28px_rgba(245,158,11,0.3)]"
+        />
         <p className="text-4xl font-light text-amber-400 tracking-[0.55em] animate-splash-letter">
           H . U . G . O
         </p>
