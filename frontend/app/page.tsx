@@ -41,6 +41,7 @@ export default function HomePage() {
   const setConversations = useStore((s) => s.setConversations);
   const addConversation = useStore((s) => s.addConversation);
   const setActive = useStore((s) => s.setActiveConversation);
+  const setMessages = useStore((s) => s.setMessages);
   const activeId = useStore((s) => s.activeConversationId);
   const connectionStatus = useStore((s) => s.connectionStatus);
 
@@ -59,13 +60,17 @@ export default function HomePage() {
       if (items.length > 0) {
         setConversations(items);
         setActive(items[0].id);
+        try {
+          const { items: msgs } = await api.messages.list(items[0].id);
+          setMessages(items[0].id, msgs);
+        } catch {}
         return;
       }
     }
     const conv = await api.conversations.create();
     addConversation(conv);
     setActive(conv.id);
-  }, [setConversations, addConversation, setActive]);
+  }, [setConversations, addConversation, setActive, setMessages]);
 
   const handleLoginSuccess = useCallback(async (user: User) => {
     setUser(user);
