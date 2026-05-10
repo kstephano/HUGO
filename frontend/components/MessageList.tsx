@@ -197,17 +197,9 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
   const streaming = useStore((s) => s.streaming);
   const active = streaming && !streaming.isComplete;
   const [spinVerb, setSpinVerb] = useState(randomVerb);
-  const [indicatorPhase, setIndicatorPhase] = useState(0);
-
   useEffect(() => {
     if (!active) return;
     const id = setInterval(() => setSpinVerb(randomVerb()), 3000);
-    return () => clearInterval(id);
-  }, [active]);
-
-  useEffect(() => {
-    if (!active) { setIndicatorPhase(0); return; }
-    const id = setInterval(() => setIndicatorPhase((p) => (p + 1) % 3), 900);
     return () => clearInterval(id);
   }, [active]);
 
@@ -235,14 +227,10 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
         {active && (
           <p className="mb-2.5 flex items-center gap-1.5 text-[11px] italic" style={{ color: "#FFE81F" }}>
             <span
-              className={clsx(
-                "inline-block flex-shrink-0 leading-none",
-                indicatorPhase === 1 && "animate-asterisk-spin",
-                indicatorPhase === 2 && "animate-pulse"
-              )}
+              className="animate-thinking-cycle flex-shrink-0 leading-none"
               style={{ color: "#FFE81F", fontSize: "13px" }}
             >
-              {indicatorPhase === 2 ? "•" : "*"}
+              *
             </span>
             {spinVerb}…
           </p>

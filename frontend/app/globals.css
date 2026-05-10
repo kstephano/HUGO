@@ -71,12 +71,30 @@
 }
 
 /* ── Thinking indicator ─────────────────────────────────────────── */
-@keyframes asterisk-spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+/*
+  Single continuous cycle (4s, linear):
+  0–17%   fast spin  (2 rotations)
+  17–26%  decelerate
+  26–68%  near-stationary pulse (3 pulses, ~560ms each)
+  68–77%  accelerate
+  77–100% very fast spin (3 rotations, eases into next cycle)
+  Total rotation = 2160° (6 × 360°) — seamless loop
+*/
+@keyframes thinking-cycle {
+  0%   { transform: rotate(0deg);    opacity: 1;    }
+  17%  { transform: rotate(720deg);  opacity: 1;    }
+  26%  { transform: rotate(900deg);  opacity: 1;    }
+  33%  { transform: rotate(930deg);  opacity: 0.15; }
+  40%  { transform: rotate(945deg);  opacity: 1;    }
+  47%  { transform: rotate(957deg);  opacity: 0.15; }
+  54%  { transform: rotate(966deg);  opacity: 1;    }
+  61%  { transform: rotate(975deg);  opacity: 0.15; }
+  68%  { transform: rotate(984deg);  opacity: 1;    }
+  77%  { transform: rotate(1080deg); opacity: 1;    }
+  100% { transform: rotate(2160deg); opacity: 1;    }
 }
-.animate-asterisk-spin {
-  animation: asterisk-spin 0.55s linear infinite;
+.animate-thinking-cycle {
+  animation: thinking-cycle 4s linear infinite;
   display: inline-block;
 }
 
