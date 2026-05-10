@@ -195,15 +195,27 @@ const randomVerb = () => SPINNER_VERBS[Math.floor(Math.random() * SPINNER_VERBS.
 
 function StreamingBubble({ isPending }: { isPending: boolean }) {
   const streaming = useStore((s) => s.streaming);
-  const active = streaming && !streaming.isComplete;
+  const isActive = !!(streaming && !streaming.isComplete);
+  const active = isActive ? streaming : null;
   const [spinVerb, setSpinVerb] = useState(randomVerb);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+
   useEffect(() => {
-    if (!active) return;
+    if (!isActive) return;
     const id = setInterval(() => setSpinVerb(randomVerb()), 3000);
     return () => clearInterval(id);
-  }, [active]);
+  }, [isActive]);
 
-  if (!active && !isPending) return null;
+  useEffect(() => {
+    if (!isActive) { setElapsedSeconds(0); return; }
+    setElapsedSeconds(0);
+    const id = setInterval(() => setElapsedSeconds((s) => s + 1), 1000);
+    return () => clearInterval(id);
+  }, [isActive]);
+
+  if (!isActive && !isPending) return null;
+
+  const estimatedTokens = active ? Math.round(active.text.length / 4) : 0;
 
   return (
     <div className="flex items-end gap-2.5">
@@ -215,7 +227,7 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
       {/* Bubble */}
       <div className="max-w-[72%] rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm leading-relaxed bg-[rgb(var(--bubble-assistant))] text-[rgb(var(--fg))] border border-[rgb(var(--border))] shadow-sm">
         {/* Pending state — no tokens yet */}
-        {isPending && !active && (
+        {isPending && !isActive && (
           <span className="flex items-center gap-1.5 text-xs italic" style={{ color: "#FFE81F" }}>
             <span className="w-1 h-1 rounded-full animate-bounce [animation-delay:0ms]" style={{ backgroundColor: "#FFE81F" }} />
             <span className="w-1 h-1 rounded-full animate-bounce [animation-delay:150ms]" style={{ backgroundColor: "#FFE81F" }} />
@@ -223,8 +235,8 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
           </span>
         )}
 
-        {/* Thinking — cycling verb */}
-        {active && (
+        {/* Thinking — cycling verb + elapsed time + estimated tokens */}
+        {isActive && (
           <p className="mb-2.5 flex items-center gap-1.5 text-[11px] italic" style={{ color: "#FFE81F" }}>
             <span
               className="animate-thinking-cycle flex-shrink-0"
@@ -233,13 +245,16 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
               *
             </span>
             {spinVerb}…
+            <span className="not-italic opacity-50 text-[9px] tracking-wide">
+              ({elapsedSeconds}s{estimatedTokens > 0 ? `, ~${estimatedTokens} tokens` : ""})
+            </span>
           </p>
         )}
 
         {/* Tool-use badges */}
-        {active && streaming.toolUses.length > 0 && (
+        {active && active.toolUses.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-2">
-            {streaming.toolUses.map((t) => (
+            {active.toolUses.map((t) => (
               <span
                 key={t.toolUseId}
                 className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 text-[10px] font-medium border border-purple-500/20"
@@ -256,7 +271,7 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
         {active && (
           <div className="relative">
             <div className="prose prose-sm prose-invert max-w-none break-words">
-              <Markdown>{streaming.text}</Markdown>
+              <Markdown>{active.text}</Markdown>
             </div>
             <span className="inline-block w-0.5 h-[1em] bg-[rgb(var(--fg))] opacity-70 animate-pulse ml-0.5 align-text-bottom rounded-full" />
           </div>
