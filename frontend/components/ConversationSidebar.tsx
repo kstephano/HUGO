@@ -19,12 +19,17 @@ interface Props {
 
 // ── Confirmation dialog ────────────────────────────────────────────────────────
 interface ConfirmDialogProps {
-  turningOn: boolean;
+  icon: React.ReactNode;
+  iconClass: string;
+  title: string;
+  body: string;
+  confirmLabel: string;
+  confirmClass: string;
   onConfirm: () => void;
   onCancel: () => void;
 }
 
-function ConfirmDialog({ turningOn, onConfirm, onCancel }: ConfirmDialogProps) {
+function ConfirmDialog({ icon, iconClass, title, body, confirmLabel, confirmClass, onConfirm, onCancel }: ConfirmDialogProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
@@ -35,24 +40,12 @@ function ConfirmDialog({ turningOn, onConfirm, onCancel }: ConfirmDialogProps) {
       {/* Card */}
       <div className="relative w-full max-w-sm rounded-2xl border border-[rgb(var(--border))] bg-[rgba(7,12,30,0.97)] shadow-2xl px-6 py-5 flex flex-col gap-4">
         <div className="flex items-center gap-3">
-          <span className={clsx(
-            "flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm",
-            turningOn
-              ? "bg-purple-500/15 text-purple-400"
-              : "bg-amber-500/15 text-amber-400"
-          )}>
-            {turningOn ? <ToggleRight className="w-4 h-4" /> : <ToggleLeft className="w-4 h-4" />}
+          <span className={clsx("flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm", iconClass)}>
+            {icon}
           </span>
-          <p className="text-sm font-semibold text-[rgb(var(--fg))]">
-            {turningOn ? "Remember conversations?" : "Stop remembering conversations?"}
-          </p>
+          <p className="text-sm font-semibold text-[rgb(var(--fg))]">{title}</p>
         </div>
-        <p className="text-xs text-[rgb(var(--muted))] leading-relaxed">
-          {turningOn
-            ? "Hugo will save your conversation history across sessions. You'll be able to pick up right where you left off next time you log in."
-            : "Hugo will stop saving new conversations. Your existing history will be cleared and won't be available after you leave."
-          }
-        </p>
+        <p className="text-xs text-[rgb(var(--muted))] leading-relaxed">{body}</p>
         <div className="flex gap-2 justify-end pt-1">
           <button
             onClick={onCancel}
@@ -62,14 +55,9 @@ function ConfirmDialog({ turningOn, onConfirm, onCancel }: ConfirmDialogProps) {
           </button>
           <button
             onClick={onConfirm}
-            className={clsx(
-              "px-4 py-1.5 rounded-lg text-xs font-medium transition-all",
-              turningOn
-                ? "bg-purple-600 hover:bg-purple-500 text-white shadow-[0_0_12px_rgba(147,51,234,0.35)]"
-                : "bg-amber-600/80 hover:bg-amber-500/80 text-white"
-            )}
+            className={clsx("px-4 py-1.5 rounded-lg text-xs font-medium transition-all", confirmClass)}
           >
-            {turningOn ? "Turn on" : "Turn off"}
+            {confirmLabel}
           </button>
         </div>
       </div>
@@ -83,6 +71,7 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [fadingId, setFadingId] = useState<string | null>(null);
   const [pendingToggle, setPendingToggle] = useState<boolean | null>(null);
+  const [clearAllPending, setClearAllPending] = useState(false);
   const handleLogoClick = () => setCollapsed(true);
   const settingsRef = useRef<HTMLDivElement>(null);
 
@@ -172,6 +161,7 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
     setConversations([]);
     setActive(null);
     setSettingsOpen(false);
+    setClearAllPending(false);
   };
 
   const handleToggleClick = () => {
@@ -212,9 +202,33 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
       {/* Confirmation dialog */}
       {pendingToggle !== null && (
         <ConfirmDialog
-          turningOn={pendingToggle}
+          icon={pendingToggle ? <ToggleRight className="w-4 h-4" /> : <ToggleLeft className="w-4 h-4" />}
+          iconClass={pendingToggle ? "bg-purple-500/15 text-purple-400" : "bg-amber-500/15 text-amber-400"}
+          title={pendingToggle ? "Remember conversations?" : "Stop remembering conversations?"}
+          body={pendingToggle
+            ? "Hugo will save your conversation history across sessions. You'll be able to pick up right where you left off next time you log in."
+            : "Hugo will stop saving new conversations. Your existing history will be cleared and won't be available after you leave."
+          }
+          confirmLabel={pendingToggle ? "Turn on" : "Turn off"}
+          confirmClass={pendingToggle
+            ? "bg-purple-600 hover:bg-purple-500 text-white shadow-[0_0_12px_rgba(147,51,234,0.35)]"
+            : "bg-amber-600/80 hover:bg-amber-500/80 text-white"
+          }
           onConfirm={handleConfirmToggle}
           onCancel={() => setPendingToggle(null)}
+        />
+      )}
+
+      {clearAllPending && (
+        <ConfirmDialog
+          icon={<Trash className="w-4 h-4" />}
+          iconClass="bg-red-500/15 text-red-400"
+          title="Clear all conversations?"
+          body="This will permanently delete your entire conversation history. This cannot be undone."
+          confirmLabel="Clear all"
+          confirmClass="bg-red-600/90 hover:bg-red-500 text-white"
+          onConfirm={handleClearAll}
+          onCancel={() => setClearAllPending(false)}
         />
       )}
 
@@ -393,7 +407,7 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
 
               {/* Clear all chats */}
               <button
-                onClick={handleClearAll}
+                onClick={() => setClearAllPending(true)}
                 className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg
                   text-[rgb(var(--muted))] hover:text-red-400 hover:bg-red-500/5 transition-all text-xs"
               >
