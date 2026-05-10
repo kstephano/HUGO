@@ -213,10 +213,20 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
                   : "text-[rgb(var(--muted))] hover:bg-white/5 hover:text-[rgb(var(--sidebar-fg))] border border-transparent"
               )}
             >
-              <span className="truncate leading-snug">{conv.title ?? "New conversation"}</span>
+              <div className="relative flex-1 min-w-0 overflow-hidden">
+                <span className="block whitespace-nowrap leading-snug">{conv.title ?? "New conversation"}</span>
+                <div
+                  className={clsx(
+                    "absolute inset-y-0 right-0 w-8 pointer-events-none",
+                    activeId === conv.id
+                      ? "bg-gradient-to-l from-[rgba(30,12,55,0.95)] to-transparent"
+                      : "bg-gradient-to-l from-[rgba(2,4,14,0.65)] to-transparent group-hover:from-[rgba(10,10,20,0.8)]"
+                  )}
+                />
+              </div>
               <button
                 onClick={(e) => handleDelete(e, conv.id)}
-                className="opacity-0 group-hover:opacity-100 ml-2 flex-shrink-0 text-[rgb(var(--muted))] hover:text-red-400 transition-all"
+                className="opacity-0 group-hover:opacity-100 ml-1 flex-shrink-0 text-[rgb(var(--muted))] hover:text-red-400 transition-all"
                 aria-label="Delete conversation"
               >
                 <Trash2 className="w-3.5 h-3.5" />

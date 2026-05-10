@@ -85,12 +85,10 @@ async def update_conversation_summary(db: AsyncSession, conversation_id: str, us
 
 
 async def set_conversation_title(db: AsyncSession, conversation_id: str, user_id: str, user_content: str) -> str:
-    """Generate a short title from the first user message and persist it."""
+    """Generate a short LLM title from the first user message and persist it."""
     from sqlalchemy import update
-    words = user_content.split()
-    title = " ".join(words[:6])
-    if len(words) > 6:
-        title += "…"
+    from app.orchestrator.titler import generate_title
+    title = await generate_title(user_content)
     await db.execute(
         update(Conversation)
         .where(Conversation.id == conversation_id, Conversation.user_id == user_id)
