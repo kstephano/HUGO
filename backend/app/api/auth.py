@@ -103,20 +103,32 @@ async def email_register(
     db: AsyncSession = Depends(get_db),
     redis=Depends(get_redis_dep),
 ):
-    """Create a new account with email and password."""
+    """Create a new account with email and password.
+
+    If the email belongs to an existing Google/dev account with no password,
+    we attach the password to that account rather than rejecting the request.
+    """
     settings = get_settings()
     result = await db.execute(select(User).where(User.email == payload.email))
-    if result.scalar_one_or_none() is not None:
-        raise HTTPException(status_code=409, detail="An account with this email already exists")
-    user = User(
-        id=str(uuid.uuid4()),
-        email=payload.email,
-        display_name=payload.display_name,
-        password_hash=hash_password(payload.password),
-    )
-    db.add(user)
-    await db.commit()
-    await db.refresh(user)
+    user = result.scalar_one_or_none()
+
+    if user is not None:
+        if user.password_hash is not None:
+            raise HTTPException(status_code=409, detail="An account with this email already exists")
+        # Existing account has no password (Google/dev) — attach the password
+        user.password_hash = hash_password(payload.password)
+        await db.commit()
+        await db.refresh(user)
+    else:
+        user = User(
+            id=str(uuid.uuid4()),
+            email=payload.email,
+            display_name=payload.display_name,
+            password_hash=hash_password(payload.password),
+        )
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
     await _create_session(user, response, redis, settings)
     return _session_response(user)
 
