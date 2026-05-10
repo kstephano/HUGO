@@ -42,6 +42,13 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
   }, [settingsOpen]);
 
   const handleNew = async () => {
+    // Reuse an existing empty (untitled) conversation rather than stacking up blank ones
+    const emptyConv = conversations.find((c) => !c.title);
+    if (emptyConv) {
+      setActive(emptyConv.id);
+      onMobileClose?.();
+      return;
+    }
     try {
       const conv = await api.conversations.create();
       addConversation(conv);

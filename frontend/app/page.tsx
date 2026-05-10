@@ -61,12 +61,23 @@ export default function HomePage() {
     if (rememberConversations) {
       const { items } = await api.conversations.list();
       if (items.length > 0) {
-        setConversations(items);
-        setActive(items[0].id);
-        try {
-          const { items: msgs } = await api.messages.list(items[0].id);
-          setMessages(items[0].id, msgs);
-        } catch {}
+        // Delete any surplus empty (untitled) conversations — keep at most one
+        const untitled = items.filter((c) => !c.title);
+        for (const c of untitled.slice(1)) {
+          try { await api.conversations.delete(c.id); } catch {}
+        }
+        const clean = items.filter((c) => c.title || c.id === untitled[0]?.id);
+        setConversations(clean);
+
+        // Prefer the most recent titled conversation; fall back to the single empty one
+        const target = clean.find((c) => c.title) ?? clean[0];
+        setActive(target.id);
+        if (target.title) {
+          try {
+            const { items: msgs } = await api.messages.list(target.id);
+            setMessages(target.id, msgs);
+          } catch {}
+        }
         return;
       }
     }
