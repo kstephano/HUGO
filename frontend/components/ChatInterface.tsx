@@ -170,7 +170,11 @@ export function ChatInterface({ conversationId }: Props) {
           <textarea
             ref={textareaRef}
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => {
+              // Replace "* " or "- " at the start of any line with a bullet character.
+              // Both are 2 chars wide so cursor position is preserved without adjustment.
+              setInput(e.target.value.replace(/^[*-] /gm, "• "));
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
