@@ -43,6 +43,9 @@ const SUGGESTED_PROMPTS = [
   "What's the hardest unsolved problem facing humanity?",
   "Could love actually be a quantifiable force like gravity?",
   "What would really happen if you fell into a black hole?",
+  "What's the biggest tech story this week?",
+  "What's the latest news on AI regulation?",
+  "What films are in cinemas right now?",
 ];
 
 interface Props {
