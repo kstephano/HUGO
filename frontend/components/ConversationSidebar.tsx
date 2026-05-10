@@ -433,7 +433,7 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
             {/* Settings toggle */}
             <button
               onClick={() => {
-              if (collapsed) { setCollapsed(false); }
+              if (collapsed) { setCollapsed(false); setSettingsOpen(true); }
               else { setSettingsOpen((o) => !o); }
             }}
               title="Settings"
