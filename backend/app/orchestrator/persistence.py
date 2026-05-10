@@ -74,15 +74,17 @@ async def save_assistant_message(
     return msg
 
 
-async def update_conversation_summary(db: AsyncSession, conversation_id: str, summary: str) -> None:
+async def update_conversation_summary(db: AsyncSession, conversation_id: str, user_id: str, summary: str) -> None:
     from sqlalchemy import update
     await db.execute(
-        update(Conversation).where(Conversation.id == conversation_id).values(rolling_summary=summary)
+        update(Conversation)
+        .where(Conversation.id == conversation_id, Conversation.user_id == user_id)
+        .values(rolling_summary=summary)
     )
     await db.commit()
 
 
-async def set_conversation_title(db: AsyncSession, conversation_id: str, user_content: str) -> str:
+async def set_conversation_title(db: AsyncSession, conversation_id: str, user_id: str, user_content: str) -> str:
     """Generate a short title from the first user message and persist it."""
     from sqlalchemy import update
     words = user_content.split()
@@ -90,7 +92,9 @@ async def set_conversation_title(db: AsyncSession, conversation_id: str, user_co
     if len(words) > 6:
         title += "…"
     await db.execute(
-        update(Conversation).where(Conversation.id == conversation_id).values(title=title)
+        update(Conversation)
+        .where(Conversation.id == conversation_id, Conversation.user_id == user_id)
+        .values(title=title)
     )
     await db.commit()
     return title

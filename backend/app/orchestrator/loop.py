@@ -217,14 +217,14 @@ async def run_loop(
 
     # Auto-title on the first completed response
     if final_status == "completed" and not conversation.title:
-        title = await set_conversation_title(db, conversation_id, user_content)
+        title = await set_conversation_title(db, conversation_id, user_id, user_content)
         await send(WsTitle(title=title).model_dump_json())
 
     # Rolling summary
     if final_status == "completed":
         new_summary = await maybe_summarize(conversation, messages, conversation.rolling_summary)
         if new_summary:
-            await update_conversation_summary(db, conversation_id, new_summary)
+            await update_conversation_summary(db, conversation_id, user_id, new_summary)
 
     await send(WsDone(
         message_id=final_message_id,
