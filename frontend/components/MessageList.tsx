@@ -51,7 +51,7 @@ interface Props {
 }
 
 function EmptyState({ onPromptSelect, onRevealInput }: { onPromptSelect?: (text: string) => void; onRevealInput?: () => void }) {
-  const [promptVisible, setPromptVisible] = useState(false);
+  const [promptVisible] = useState(true);
   const [promptPhase, setPromptPhase] = useState<"entering" | "holding" | "leaving">("entering");
   const [promptIndex, setPromptIndex] = useState(() =>
     Math.floor(Math.random() * SUGGESTED_PROMPTS.length)
@@ -59,12 +59,6 @@ function EmptyState({ onPromptSelect, onRevealInput }: { onPromptSelect?: (text:
   const [promptClicked, setPromptClicked] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setPromptVisible(true), 1000);
-    return () => clearTimeout(t);
-  }, []);
-
-  useEffect(() => {
-    if (!promptVisible) return;
     let t: ReturnType<typeof setTimeout>;
     if (promptPhase === "entering") {
       t = setTimeout(() => setPromptPhase("holding"), 1500);
