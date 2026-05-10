@@ -83,7 +83,7 @@ export function LoginPage({ onSuccess }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-[rgba(3,7,18,0.6)] backdrop-blur-sm">
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-[rgba(3,7,18,0.35)]">
       <div className="flex flex-col items-center gap-8 w-full max-w-sm px-6">
         {/* Logo */}
         <div className="flex flex-col items-center gap-3">
