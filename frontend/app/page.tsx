@@ -78,13 +78,25 @@ export default function HomePage() {
           addConversation(conv);
           setActive(conv.id);
         }
+
+        // Preload all titled conversation messages in the background so
+        // switching conversations is instant — no per-click fetch delay
+        const titled = clean.filter((c) => c.title);
+        Promise.allSettled(
+          titled.map(async (conv) => {
+            try {
+              const { items: msgs } = await api.messages.list(conv.id);
+              setMessages(conv.id, msgs);
+            } catch {}
+          })
+        );
         return;
       }
     }
     const conv = await api.conversations.create();
     addConversation(conv);
     setActive(conv.id);
-  }, [setConversations, addConversation, setActive]);
+  }, [setConversations, addConversation, setActive, setMessages]);
 
   const handleLoginSuccess = useCallback(async (user: User) => {
     setUser(user);

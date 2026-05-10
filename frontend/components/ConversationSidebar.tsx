@@ -30,6 +30,7 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
   const removeConversation = useStore((s) => s.removeConversation);
   const setConversations = useStore((s) => s.setConversations);
   const setMessages = useStore((s) => s.setMessages);
+  const messagesByConv = useStore((s) => s.messagesByConv);
 
   // Close settings panel on outside click
   useEffect(() => {
@@ -62,6 +63,8 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
   const handleSelect = async (id: string) => {
     setActive(id);
     onMobileClose?.();
+    // Skip fetch if already preloaded at login
+    if (id in messagesByConv) return;
     try {
       const { items } = await api.messages.list(id);
       setMessages(id, items);
