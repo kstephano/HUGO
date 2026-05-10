@@ -20,7 +20,7 @@ export function ChatInterface({ conversationId }: Props) {
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [inputVisible, setInputVisible] = useState(false);
+  const [inputVisible, setInputVisible] = useState(true);
   const wsRef = useRef<HugoWebSocket | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -99,9 +99,9 @@ export function ChatInterface({ conversationId }: Props) {
     return () => ws.destroy();
   }, [conversationId]);
 
-  // Reset input bar visibility when switching to a new empty conversation
+  // Ensure input bar is visible when switching conversations
   useEffect(() => {
-    if (messages.length === 0) setInputVisible(false);
+    setInputVisible(true);
   }, [conversationId]);
 
   // Keep store in sync so sidebar can read draft state

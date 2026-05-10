@@ -139,12 +139,6 @@ function EmptyState({ onPromptSelect, onRevealInput }: { onPromptSelect?: (text:
               →
             </button>
           </div>
-          <button
-            onClick={onRevealInput}
-            className="mt-4 text-[10px] text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors tracking-widest uppercase"
-          >
-            or type your own
-          </button>
         </div>
       )}
     </div>
