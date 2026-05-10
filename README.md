@@ -76,28 +76,28 @@ Tools run concurrently (up to 5 in parallel) with a 30-second timeout each. Resu
 Hugo is a Next.js frontend backed by a FastAPI service communicating over a persistent WebSocket. All AI responses stream token-by-token from Anthropic's API through to the browser.
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                   Browser · Next.js                     │
-│                                                         │
-│    Sidebar · ChatInterface · MessageList                │
-│          Zustand Store · WebSocket Client               │
+┌───────────────────────────────────────────────────────┐
+│                   Browser · Next.js                   │
+│                                                       │
+│    Sidebar · ChatInterface · MessageList              │
+│          Zustand Store · WebSocket Client             │
 └───────────────────────────┬───────────────────────────┘
                             │
                      WebSocket + REST API
                    (HTTP-only session cookies)
                             │
 ┌───────────────────────────┴───────────────────────────┐
-│                    FastAPI Backend                     │
-│                                                        │
+│                    FastAPI Backend                    │
+│                                                       │
 │    /api/auth · /api/conversations · /ws               │
-│                                                        │
+│                                                       │
 │          ┌─────────────────────────────────┐          │
 │          │       Agent Orchestrator        │          │
 │          │  Loop · History · Titler        │          │
 │          │  Summariser · Persistence       │          │
 │          │  Tool Registry                  │          │
 │          └─────────────────────────────────┘          │
-│                                                        │
+│                                                       │
 └────────┬──────────────────┬──────────────────┬────────┘
          │                  │                  │
 ┌────────┴──────┐  ┌────────┴──────┐  ┌────────┴──────┐
