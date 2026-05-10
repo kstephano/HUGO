@@ -1,8 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import Markdown from "markdown-to-jsx";
 import { useStore } from "@/lib/store";
 import { User } from "lucide-react";
 import type { Message } from "@/lib/types";
@@ -180,9 +179,9 @@ function MessageBubble({ msg }: { msg: Message }) {
             : "bg-[rgb(var(--bubble-assistant))] text-[rgb(var(--fg))] border border-[rgb(var(--border))] rounded-bl-sm shadow-sm"
         )}
       >
-        <ReactMarkdown remarkPlugins={[remarkGfm]} className="prose prose-sm prose-invert max-w-none break-words">
-          {text}
-        </ReactMarkdown>
+        <div className="prose prose-sm prose-invert max-w-none break-words">
+          <Markdown>{text}</Markdown>
+        </div>
         {msg.status === "cancelled" && (
           <span className="mt-1 block text-[10px] opacity-50 italic">generation stopped</span>
         )}
@@ -251,9 +250,9 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
         {/* Streaming text */}
         {active && (
           <div className="relative">
-            <ReactMarkdown remarkPlugins={[remarkGfm]} className="prose prose-sm prose-invert max-w-none break-words">
-              {streaming.text}
-            </ReactMarkdown>
+            <div className="prose prose-sm prose-invert max-w-none break-words">
+              <Markdown>{streaming.text}</Markdown>
+            </div>
             <span className="inline-block w-0.5 h-[1em] bg-[rgb(var(--fg))] opacity-70 animate-pulse ml-0.5 align-text-bottom rounded-full" />
           </div>
         )}
