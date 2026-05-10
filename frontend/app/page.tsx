@@ -14,18 +14,9 @@ type SplashPhase = "show" | "exit" | "done";
 function SplashScreen({ phase }: { phase: SplashPhase }) {
   return (
     <div
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-center transition-opacity duration-500 ${
+      className={`fixed inset-0 z-50 flex flex-col items-center justify-center transition-opacity duration-500 bg-[rgba(3,7,18,0.75)] backdrop-blur-sm ${
         phase === "exit" ? "opacity-0" : "opacity-100"
       }`}
-      style={{
-        background: "rgb(3 7 18)",
-        backgroundImage: `
-          radial-gradient(ellipse 90% 60% at 8% 92%, rgba(59,130,246,0.08) 0%, transparent 55%),
-          radial-gradient(ellipse 70% 50% at 92% 8%,  rgba(245,158,11,0.07) 0%, transparent 55%),
-          radial-gradient(rgba(255,255,255,0.10) 1px, transparent 1px)
-        `,
-        backgroundSize: "100% 100%, 100% 100%, 64px 64px",
-      }}
     >
       <div className="flex flex-col items-center gap-4">
         <p className="text-4xl font-light text-amber-400 tracking-[0.55em] animate-splash-letter">
@@ -114,7 +105,7 @@ export default function HomePage() {
     <>
       {splash !== "done" && <SplashScreen phase={splash} />}
 
-      <div className="flex h-screen overflow-hidden bg-[rgb(var(--bg))]">
+      <div className="flex h-screen overflow-hidden">
         {boot === "error" ? (
           <div className="flex-1 flex flex-col items-center justify-center gap-3 text-center px-6">
             <p className="text-sm font-medium text-[rgb(var(--fg))]">Unable to connect</p>
@@ -136,7 +127,7 @@ export default function HomePage() {
             <main className="flex-1 flex flex-col overflow-hidden">
               {activeId && (
                 <ErrorBoundary>
-                  <div className="flex items-center gap-2 px-4 py-2 border-b border-[rgb(var(--border))] bg-[rgb(var(--input-bg))/60]">
+                  <div className="flex items-center gap-2 px-4 py-2 border-b border-[rgb(var(--border))] bg-[rgba(5,9,22,0.7)] backdrop-blur-sm">
                     <span
                       className={`w-1.5 h-1.5 rounded-full transition-colors ${
                         connectionStatus === "connected"

@@ -103,7 +103,7 @@ export function ConversationSidebar({ onLogout }: Props) {
   return (
     <aside
       className={clsx(
-        "flex-shrink-0 flex flex-col h-full bg-[rgb(var(--sidebar-bg))] border-r border-[rgb(var(--sidebar-border))]",
+        "flex-shrink-0 flex flex-col h-full bg-[rgba(2,4,14,0.65)] backdrop-blur-md border-r border-[rgb(var(--sidebar-border))]",
         "transition-[width] duration-300 ease-in-out overflow-hidden",
         collapsed ? "w-14" : "w-60"
       )}
@@ -151,11 +151,11 @@ export function ConversationSidebar({ onLogout }: Props) {
           <button
             onClick={handleNew}
             className="w-10 h-10 mx-auto flex items-center justify-center rounded-lg
-              bg-gradient-to-br from-amber-600 to-amber-700
-              hover:from-amber-500 hover:to-amber-600
+              bg-gradient-to-br from-purple-600 to-purple-700
+              hover:from-purple-500 hover:to-purple-600
               text-white transition-all
-              shadow-[0_0_12px_rgba(245,158,11,0.2)]
-              hover:shadow-[0_0_16px_rgba(245,158,11,0.35)]"
+              shadow-[0_0_12px_rgba(147,51,234,0.35)]
+              hover:shadow-[0_0_16px_rgba(147,51,234,0.55)]"
             aria-label="New conversation"
           >
             <Plus className="w-4 h-4" />
@@ -164,11 +164,11 @@ export function ConversationSidebar({ onLogout }: Props) {
           <button
             onClick={handleNew}
             className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg
-              bg-gradient-to-r from-amber-600 to-amber-700
-              hover:from-amber-500 hover:to-amber-600
+              bg-gradient-to-r from-purple-600 to-purple-700
+              hover:from-purple-500 hover:to-purple-600
               text-white text-sm font-medium tracking-wide
-              transition-all shadow-[0_0_16px_rgba(245,158,11,0.2)]
-              hover:shadow-[0_0_20px_rgba(245,158,11,0.35)]"
+              transition-all shadow-[0_0_16px_rgba(147,51,234,0.35)]
+              hover:shadow-[0_0_20px_rgba(147,51,234,0.55)]"
           >
             <Plus className="w-4 h-4" />
             New chat
@@ -191,7 +191,7 @@ export function ConversationSidebar({ onLogout }: Props) {
               className={clsx(
                 "group flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer text-sm transition-all",
                 activeId === conv.id
-                  ? "bg-amber-500/10 text-amber-300 border border-amber-500/20 shadow-[inset_0_0_12px_rgba(245,158,11,0.05)]"
+                  ? "bg-purple-500/10 text-purple-300 border border-purple-500/20 shadow-[inset_0_0_12px_rgba(147,51,234,0.08)]"
                   : "text-[rgb(var(--muted))] hover:bg-white/5 hover:text-[rgb(var(--sidebar-fg))] border border-transparent"
               )}
             >
@@ -219,7 +219,7 @@ export function ConversationSidebar({ onLogout }: Props) {
               className={clsx(
                 "w-2 h-2 rounded-full transition-all flex-shrink-0",
                 activeId === conv.id
-                  ? "bg-amber-400 shadow-[0_0_6px_rgba(245,158,11,0.6)]"
+                  ? "bg-purple-400 shadow-[0_0_6px_rgba(147,51,234,0.6)]"
                   : "bg-[rgb(var(--border))] hover:bg-[rgb(var(--muted))]"
               )}
             />
@@ -241,7 +241,7 @@ export function ConversationSidebar({ onLogout }: Props) {
             >
               <span>Remember conversations</span>
               {user?.rememberConversations
-                ? <ToggleRight className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                ? <ToggleRight className="w-4 h-4 text-purple-400 flex-shrink-0" />
                 : <ToggleLeft className="w-4 h-4 flex-shrink-0" />
               }
             </button>
@@ -279,7 +279,7 @@ export function ConversationSidebar({ onLogout }: Props) {
               "flex-shrink-0 flex items-center justify-center rounded-lg transition-colors",
               "text-[rgb(var(--muted))] hover:text-[rgb(var(--sidebar-fg))]",
               collapsed ? "w-10 h-10" : "w-7 h-7",
-              settingsOpen && !collapsed && "text-amber-400"
+              settingsOpen && !collapsed && "text-purple-400"
             )}
             aria-label="Settings"
           >

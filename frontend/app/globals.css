@@ -18,13 +18,7 @@
   html { color-scheme: dark; }
 
   body {
-    background-color: rgb(var(--bg));
-    /* Star field: subtle dot grid + two nebula glows */
-    background-image:
-      radial-gradient(ellipse 90% 60% at 8% 92%, rgba(59, 130, 246, 0.07) 0%, transparent 55%),
-      radial-gradient(ellipse 70% 50% at 92% 8%,  rgba(245, 158, 11, 0.06) 0%, transparent 55%),
-      radial-gradient(rgba(255, 255, 255, 0.10) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 64px 64px;
+    background: url('/images/space-background.png') center / cover no-repeat fixed;
     color: rgb(var(--fg));
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

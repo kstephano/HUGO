@@ -46,7 +46,7 @@ export function LoginPage({ onSuccess }: Props) {
         window.google?.accounts.id.renderButton(buttonRef.current, {
           type: "standard",
           shape: "rectangular",
-          theme: "filled_black",
+          theme: "outline",
           text: "signin_with",
           size: "large",
           logo_alignment: "left",
@@ -83,18 +83,7 @@ export function LoginPage({ onSuccess }: Props) {
   };
 
   return (
-    <div
-      className="fixed inset-0 flex flex-col items-center justify-center"
-      style={{
-        background: "rgb(3 7 18)",
-        backgroundImage: `
-          radial-gradient(ellipse 90% 60% at 8% 92%, rgba(59,130,246,0.06) 0%, transparent 55%),
-          radial-gradient(ellipse 70% 50% at 92% 8%,  rgba(245,158,11,0.06) 0%, transparent 55%),
-          radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px)
-        `,
-        backgroundSize: "100% 100%, 100% 100%, 64px 64px",
-      }}
-    >
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-[rgba(3,7,18,0.6)] backdrop-blur-sm">
       <div className="flex flex-col items-center gap-8 w-full max-w-sm px-6">
         {/* Logo */}
         <div className="flex flex-col items-center gap-3">
@@ -119,7 +108,10 @@ export function LoginPage({ onSuccess }: Props) {
 
           {/* Google button container */}
           {googleClientId && (
-            <div ref={buttonRef} className={loading ? "opacity-50 pointer-events-none" : ""} />
+            <div
+              ref={buttonRef}
+              className={`overflow-hidden rounded-xl${loading ? " opacity-50 pointer-events-none" : ""}`}
+            />
           )}
 
           {/* Dev login fallback */}
@@ -136,17 +128,17 @@ export function LoginPage({ onSuccess }: Props) {
                 disabled={loading}
                 className="w-full px-4 py-2.5 rounded-xl border border-white/10 bg-white/5
                   text-sm text-white placeholder:text-slate-600
-                  focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500/40
+                  focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:border-purple-500/40
                   disabled:opacity-40 transition-all"
               />
               <button
                 type="submit"
                 disabled={loading || !devEmail.trim()}
-                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700
-                  hover:from-amber-500 hover:to-amber-600
+                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-purple-700
+                  hover:from-purple-500 hover:to-purple-600
                   text-white text-sm font-medium tracking-wide
                   disabled:opacity-30 disabled:cursor-not-allowed
-                  transition-all shadow-[0_0_16px_rgba(245,158,11,0.2)]"
+                  transition-all shadow-[0_0_16px_rgba(147,51,234,0.35)]"
               >
                 {loading ? "Signing in…" : "Continue"}
               </button>
