@@ -15,9 +15,14 @@
     --input-bg: 5 9 22;
   }
 
-  html { color-scheme: dark; }
+  html {
+    color-scheme: dark;
+    height: 100%;
+  }
 
   body {
+    height: 100%;
+    overflow: hidden;
     background: url('/images/space-background.png') center / cover no-repeat fixed;
     color: rgb(var(--fg));
     -webkit-font-smoothing: antialiased;

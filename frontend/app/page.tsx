@@ -129,7 +129,7 @@ export default function HomePage() {
     <>
       {splash !== "done" && <SplashScreen phase={splash} />}
 
-      <div className="flex h-screen overflow-hidden">
+      <div className="flex h-[100dvh] overflow-hidden">
         {boot === "error" ? (
           <div className="flex-1 flex flex-col items-center justify-center gap-3 text-center px-6">
             <p className="text-sm font-medium text-[rgb(var(--fg))]">Unable to connect</p>

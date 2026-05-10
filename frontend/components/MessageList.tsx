@@ -6,9 +6,17 @@ import { User } from "lucide-react";
 import type { Message } from "@/lib/types";
 import clsx from "clsx";
 
+const STARTER_PROMPTS = [
+  "What's in the news today?",
+  "I have £50k to invest and I'm 28 — what allocation would you suggest and why?",
+  "Walk me through how a transformer's attention mechanism actually works.",
+  "Is it ever ethical to lie? Give me a genuinely balanced answer.",
+];
+
 interface Props {
   conversationId: string;
   isPending?: boolean;
+  onPromptClick?: (text: string) => void;
 }
 
 function MessageBubble({ msg }: { msg: Message }) {
@@ -131,13 +139,45 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
   );
 }
 
-export function MessageList({ conversationId, isPending = false }: Props) {
+export function MessageList({ conversationId, isPending = false, onPromptClick }: Props) {
   const messages = useStore((s) => s.messagesByConv[conversationId] ?? []);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages.length, isPending]);
+
+  if (messages.length === 0 && !isPending) {
+    return (
+      <div className="flex-1 overflow-y-auto scrollbar-thin flex flex-col items-center justify-center px-4 py-8">
+        <Image
+          src="/images/hugo-logo.png"
+          alt="Hugo"
+          width={52}
+          height={52}
+          className="rounded-full shadow-[0_0_20px_rgba(245,158,11,0.2)] mb-4"
+        />
+        <p className="text-sm font-medium text-[rgb(var(--sidebar-fg))] mb-1">How can I help?</p>
+        <p className="text-xs text-[rgb(var(--muted))] mb-6 text-center leading-relaxed max-w-xs">
+          I can search the web, reason through complex problems, and retrieve from your documents.
+        </p>
+        <div className="w-full max-w-sm space-y-2">
+          {STARTER_PROMPTS.map((prompt) => (
+            <button
+              key={prompt}
+              onClick={() => onPromptClick?.(prompt)}
+              className="w-full text-left px-4 py-2.5 rounded-xl border border-[rgb(var(--border))]
+                bg-[rgba(5,9,22,0.6)] text-xs text-[rgb(var(--muted))]
+                hover:text-[rgb(var(--sidebar-fg))] hover:border-purple-500/30 hover:bg-purple-500/5
+                transition-all leading-relaxed"
+            >
+              {prompt}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 overflow-y-auto scrollbar-thin px-3 py-4 sm:px-4 sm:py-6">
