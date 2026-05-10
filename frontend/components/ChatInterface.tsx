@@ -20,9 +20,11 @@ export function ChatInterface({ conversationId }: Props) {
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [inputVisible, setInputVisible] = useState(false);
   const wsRef = useRef<HugoWebSocket | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  const messages = useStore((s) => s.messagesByConv[conversationId] ?? []);
   const setConnectionStatus = useStore((s) => s.setConnectionStatus);
   const setDraftInput = useStore((s) => s.setDraftInput);
   const appendStreamDelta = useStore((s) => s.appendStreamDelta);
@@ -97,6 +99,11 @@ export function ChatInterface({ conversationId }: Props) {
     return () => ws.destroy();
   }, [conversationId]);
 
+  // Reset input bar visibility when switching to a new empty conversation
+  useEffect(() => {
+    if (messages.length === 0) setInputVisible(false);
+  }, [conversationId]);
+
   // Keep store in sync so sidebar can read draft state
   useEffect(() => { setDraftInput(input); }, [input]);
 
@@ -110,6 +117,7 @@ export function ChatInterface({ conversationId }: Props) {
 
   const sendContent = (content: string) => {
     if (!content.trim() || isStreaming) return;
+    setInputVisible(true);
     setErrorMsg(null);
     const clientMessageId = uuid();
     appendMessage({
@@ -138,12 +146,15 @@ export function ChatInterface({ conversationId }: Props) {
     finalizeStreaming();
   };
 
+  const showInputBar = inputVisible || isStreaming || messages.length > 0;
+
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <MessageList
         conversationId={conversationId}
         isPending={isStreaming}
         onPromptSelect={sendContent}
+        onRevealInput={() => setInputVisible(true)}
       />
 
       {/* Error banner */}
@@ -153,8 +164,8 @@ export function ChatInterface({ conversationId }: Props) {
         </div>
       )}
 
-      {/* Input bar */}
-      <div className="flex-shrink-0 border-t border-[rgb(var(--border))] bg-[rgba(5,9,22,0.82)] backdrop-blur-sm px-3 py-2 sm:px-4 sm:py-3">
+      {/* Input bar — hidden until user acts on empty conversation */}
+      {showInputBar && <div className="flex-shrink-0 border-t border-[rgb(var(--border))] bg-[rgba(5,9,22,0.82)] backdrop-blur-sm px-3 py-2 sm:px-4 sm:py-3">
         <div className="max-w-3xl mx-auto flex items-end gap-3">
           <textarea
             ref={textareaRef}
@@ -205,7 +216,7 @@ export function ChatInterface({ conversationId }: Props) {
         <p className="hidden sm:block text-center text-[10px] text-[rgb(var(--muted))] mt-2 tracking-wide">
           Enter to send · Shift + Enter for new line
         </p>
-      </div>
+      </div>}
     </div>
   );
 }

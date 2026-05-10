@@ -47,9 +47,10 @@ interface Props {
   conversationId: string;
   isPending?: boolean;
   onPromptSelect?: (text: string) => void;
+  onRevealInput?: () => void;
 }
 
-function EmptyState({ onPromptSelect }: { onPromptSelect?: (text: string) => void }) {
+function EmptyState({ onPromptSelect, onRevealInput }: { onPromptSelect?: (text: string) => void; onRevealInput?: () => void }) {
   const [promptVisible, setPromptVisible] = useState(false);
   const [promptPhase, setPromptPhase] = useState<"entering" | "holding" | "leaving">("entering");
   const [promptIndex, setPromptIndex] = useState(() =>
@@ -95,7 +96,7 @@ function EmptyState({ onPromptSelect }: { onPromptSelect?: (text: string) => voi
           height={52}
           className="rounded-full shadow-[0_0_20px_rgba(245,158,11,0.2)]"
         />
-        <p className="text-sm text-[rgb(var(--muted))] italic">{OPENING_LINE}</p>
+        <p className="text-[18px] font-medium text-white">{OPENING_LINE}</p>
       </div>
 
       {/* Star Wars style prompt card */}
@@ -138,6 +139,12 @@ function EmptyState({ onPromptSelect }: { onPromptSelect?: (text: string) => voi
               →
             </button>
           </div>
+          <button
+            onClick={onRevealInput}
+            className="mt-4 text-[10px] text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors tracking-widest uppercase"
+          >
+            or type your own
+          </button>
         </div>
       )}
     </div>
@@ -261,7 +268,7 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
   );
 }
 
-export function MessageList({ conversationId, isPending = false, onPromptSelect }: Props) {
+export function MessageList({ conversationId, isPending = false, onPromptSelect, onRevealInput }: Props) {
   const messages = useStore((s) => s.messagesByConv[conversationId] ?? []);
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -270,7 +277,7 @@ export function MessageList({ conversationId, isPending = false, onPromptSelect 
   }, [messages.length, isPending]);
 
   if (messages.length === 0 && !isPending) {
-    return <EmptyState onPromptSelect={onPromptSelect} />;
+    return <EmptyState onPromptSelect={onPromptSelect} onRevealInput={onRevealInput} />;
   }
 
   return (

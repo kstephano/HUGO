@@ -309,12 +309,12 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
         {/* Conversation list — hidden when collapsed */}
         {!collapsed && (
           <nav className="flex-1 overflow-y-auto scrollbar-thin px-2 pb-2 space-y-0.5">
-            {conversations.length === 0 && (
+            {conversations.filter((c) => c.title).length === 0 && (
               <p className="text-center text-[10px] text-[rgb(var(--muted))] mt-8 px-3 leading-relaxed">
                 No conversations yet
               </p>
             )}
-            {conversations.map((conv) => (
+            {conversations.filter((c) => c.title).map((conv) => (
               <div
                 key={conv.id}
                 onClick={() => fadingId !== conv.id && handleSelect(conv.id)}
@@ -354,9 +354,9 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
         )}
 
         {/* Collapsed: dot indicators */}
-        {collapsed && conversations.length > 0 && (
+        {collapsed && conversations.filter((c) => c.title).length > 0 && (
           <div className="flex-1 flex flex-col items-center pt-2 gap-1.5 overflow-hidden">
-            {conversations.slice(0, 8).map((conv) => (
+            {conversations.filter((c) => c.title).slice(0, 8).map((conv) => (
               <button
                 key={conv.id}
                 onClick={() => handleSelect(conv.id)}
