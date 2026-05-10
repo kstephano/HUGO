@@ -227,8 +227,8 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
         {active && (
           <p className="mb-2.5 flex items-center gap-1.5 text-[11px] italic" style={{ color: "#FFE81F" }}>
             <span
-              className="animate-thinking-cycle flex-shrink-0 leading-none"
-              style={{ color: "#FFE81F", fontSize: "13px" }}
+              className="animate-thinking-cycle flex-shrink-0"
+              style={{ color: "#FFE81F", fontSize: "13px", width: "14px", height: "14px" }}
             >
               *
             </span>

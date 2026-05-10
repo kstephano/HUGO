@@ -95,7 +95,11 @@
 }
 .animate-thinking-cycle {
   animation: thinking-cycle 4s linear infinite;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
 }
 
 /* ── Thought list ───────────────────────────────────────────────── */

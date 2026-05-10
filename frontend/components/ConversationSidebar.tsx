@@ -432,7 +432,10 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
 
             {/* Settings toggle */}
             <button
-              onClick={() => !collapsed && setSettingsOpen((o) => !o)}
+              onClick={() => {
+              if (collapsed) { setCollapsed(false); }
+              else { setSettingsOpen((o) => !o); }
+            }}
               title="Settings"
               className={clsx(
                 "flex-shrink-0 flex items-center justify-center rounded-lg transition-colors",
