@@ -18,6 +18,7 @@ interface Props {
 export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClose }: Props) {
   const [collapsed, setCollapsed] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [fadingId, setFadingId] = useState<string | null>(null);
   const handleLogoClick = () => setCollapsed(true);
   const settingsRef = useRef<HTMLDivElement>(null);
 
@@ -31,6 +32,7 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
   const setConversations = useStore((s) => s.setConversations);
   const setMessages = useStore((s) => s.setMessages);
   const messagesByConv = useStore((s) => s.messagesByConv);
+  const draftInput = useStore((s) => s.draftInput);
 
   // Close settings panel on outside click
   useEffect(() => {
@@ -61,9 +63,22 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
   };
 
   const handleSelect = async (id: string) => {
+    if (id === activeId) return;
+
+    // Fade out and delete the current conversation if it's empty and input is blank
+    const currentConv = conversations.find((c) => c.id === activeId);
+    if (currentConv && !currentConv.title && !draftInput.trim()) {
+      const idToDelete = currentConv.id;
+      setFadingId(idToDelete);
+      setTimeout(async () => {
+        try { await api.conversations.delete(idToDelete); } catch {}
+        removeConversation(idToDelete);
+        setFadingId(null);
+      }, 350);
+    }
+
     setActive(id);
     onMobileClose?.();
-    // Skip fetch if already preloaded at login
     if (id in messagesByConv) return;
     try {
       const { items } = await api.messages.list(id);
@@ -219,7 +234,8 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
               key={conv.id}
               onClick={() => handleSelect(conv.id)}
               className={clsx(
-                "group flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer text-sm transition-all",
+                "group flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer text-sm transition-all duration-300",
+                fadingId === conv.id && "opacity-0 pointer-events-none",
                 activeId === conv.id
                   ? "bg-purple-500/10 text-purple-300 border border-purple-500/20 shadow-[inset_0_0_12px_rgba(147,51,234,0.08)]"
                   : "text-[rgb(var(--muted))] hover:bg-white/5 hover:text-[rgb(var(--sidebar-fg))] border border-transparent"

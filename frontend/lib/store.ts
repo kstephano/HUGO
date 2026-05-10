@@ -29,6 +29,12 @@ interface MessagesSlice {
   appendMessage: (msg: Message) => void;
 }
 
+// ── Draft input slice ──────────────────────────────────────────────────────────
+interface DraftInputSlice {
+  draftInput: string;
+  setDraftInput: (v: string) => void;
+}
+
 // ── Connection slice ───────────────────────────────────────────────────────────
 interface ConnectionSlice {
   connectionStatus: ConnectionStatus;
@@ -45,7 +51,7 @@ interface StreamingSlice {
   finalizeStreaming: () => void;
 }
 
-type StoreState = UserSlice & ConversationsSlice & MessagesSlice & ConnectionSlice & StreamingSlice;
+type StoreState = UserSlice & ConversationsSlice & MessagesSlice & DraftInputSlice & ConnectionSlice & StreamingSlice;
 
 export const useStore = create<StoreState>((set, get) => ({
   // User
@@ -74,6 +80,10 @@ export const useStore = create<StoreState>((set, get) => ({
       const prev = s.messagesByConv[msg.conversationId] ?? [];
       return { messagesByConv: { ...s.messagesByConv, [msg.conversationId]: [...prev, msg] } };
     }),
+
+  // Draft input
+  draftInput: "",
+  setDraftInput: (draftInput) => set({ draftInput }),
 
   // Connection
   connectionStatus: "disconnected",

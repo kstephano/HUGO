@@ -24,6 +24,7 @@ export function ChatInterface({ conversationId }: Props) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const setConnectionStatus = useStore((s) => s.setConnectionStatus);
+  const setDraftInput = useStore((s) => s.setDraftInput);
   const appendStreamDelta = useStore((s) => s.appendStreamDelta);
   const appendThinkingDelta = useStore((s) => s.appendThinkingDelta);
   const addToolUse = useStore((s) => s.addToolUse);
@@ -95,6 +96,9 @@ export function ChatInterface({ conversationId }: Props) {
     ws.connect();
     return () => ws.destroy();
   }, [conversationId]);
+
+  // Keep store in sync so sidebar can read draft state
+  useEffect(() => { setDraftInput(input); }, [input]);
 
   // Auto-grow textarea
   useEffect(() => {
