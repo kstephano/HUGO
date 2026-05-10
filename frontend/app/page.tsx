@@ -23,7 +23,7 @@ function SplashScreen({ phase }: { phase: SplashPhase }) {
           H . U . G . O
         </p>
         <p className="text-[11px] font-light text-slate-500 uppercase tracking-[0.3em]">
-          Heuristic Universal Generative Oracle
+          Helpful Universal Guidance Operator
         </p>
       </div>
     </div>

@@ -10,7 +10,7 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: "Hugo",
-  description: "Heuristic Universal Generative Oracle",
+  description: "Helpful Universal Guidance Operator",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

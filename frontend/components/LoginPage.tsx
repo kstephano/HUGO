@@ -97,7 +97,7 @@ export function LoginPage({ onSuccess }: Props) {
           <div className="text-center">
             <p className="text-2xl font-light text-amber-400 tracking-[0.45em]">H . U . G . O</p>
             <p className="text-[11px] text-slate-500 tracking-[0.25em] uppercase mt-1">
-              Heuristic Universal Generative Oracle
+              Helpful Universal Guidance Operator
             </p>
           </div>
         </div>
