@@ -41,6 +41,8 @@ const SUGGESTED_PROMPTS = [
   "Summarise the key global events from the last month.",
   "I have £50k to invest and I'm 28. What would you suggest?",
   "What's the hardest unsolved problem facing humanity?",
+  "Could love actually be a quantifiable force like gravity?",
+  "What would really happen if you fell into a black hole?",
 ];
 
 interface Props {
