@@ -104,9 +104,8 @@ export function ChatInterface({ conversationId }: Props) {
     el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
   }, [input]);
 
-  const handleSend = () => {
-    const content = input.trim();
-    if (!content || isStreaming) return;
+  const sendContent = (content: string) => {
+    if (!content.trim() || isStreaming) return;
     setErrorMsg(null);
     const clientMessageId = uuid();
     appendMessage({
@@ -127,6 +126,8 @@ export function ChatInterface({ conversationId }: Props) {
     setIsStreaming(true);
   };
 
+  const handleSend = () => sendContent(input.trim());
+
   const handleCancel = () => {
     wsRef.current?.sendCancel();
     setIsStreaming(false);
@@ -138,7 +139,7 @@ export function ChatInterface({ conversationId }: Props) {
       <MessageList
         conversationId={conversationId}
         isPending={isStreaming}
-        onPromptSelect={(text) => setInput(text)}
+        onPromptSelect={sendContent}
       />
 
       {/* Error banner */}

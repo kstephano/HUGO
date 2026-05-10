@@ -69,7 +69,7 @@ function EmptyState({ onPromptSelect }: { onPromptSelect?: (text: string) => voi
     if (promptPhase === "entering") {
       t = setTimeout(() => setPromptPhase("holding"), 1500);
     } else if (promptPhase === "holding") {
-      t = setTimeout(() => setPromptPhase("leaving"), 30000);
+      t = setTimeout(() => setPromptPhase("leaving"), 12000);
     } else {
       t = setTimeout(() => {
         setPromptIndex((i) => (i + 1) % SUGGESTED_PROMPTS.length);
@@ -121,22 +121,22 @@ function EmptyState({ onPromptSelect }: { onPromptSelect?: (text: string) => voi
             </div>
           </div>
 
-          {/* Use this button */}
-          <div className="flex justify-center mt-3">
+          {/* Buttons */}
+          <div className="flex items-center justify-center gap-3 mt-3">
             <button
-              onClick={() => {
-                if (promptClicked) return;
-                setPromptClicked(true);
-                onPromptSelect?.(SUGGESTED_PROMPTS[promptIndex]);
-              }}
-              className={clsx(
-                "px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] border transition-all",
-                promptClicked
-                  ? "border-[#FFE81F]/25 text-[#FFE81F]/40 cursor-default"
-                  : "border-[#FFE81F]/50 text-[#FFE81F]/70 hover:border-[#FFE81F] hover:text-[#FFE81F] hover:bg-[#FFE81F]/5"
-              )}
+              onClick={() => onPromptSelect?.(SUGGESTED_PROMPTS[promptIndex])}
+              className="px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] border transition-all
+                border-[#FFE81F]/50 text-[#FFE81F]/70 hover:border-[#FFE81F] hover:text-[#FFE81F] hover:bg-[#FFE81F]/5"
             >
-              {promptClicked ? "Loaded ✓" : "Use this"}
+              Send
+            </button>
+            <button
+              onClick={() => promptPhase !== "leaving" && setPromptPhase("leaving")}
+              className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] border transition-all
+                border-[#FFE81F]/25 text-[#FFE81F]/40 hover:border-[#FFE81F]/60 hover:text-[#FFE81F]/70"
+              aria-label="Next prompt"
+            >
+              →
             </button>
           </div>
         </div>
