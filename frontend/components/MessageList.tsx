@@ -140,7 +140,7 @@ export function MessageList({ conversationId, isPending = false }: Props) {
   }, [messages.length, isPending]);
 
   return (
-    <div className="flex-1 overflow-y-auto scrollbar-thin px-4 py-6">
+    <div className="flex-1 overflow-y-auto scrollbar-thin px-3 py-4 sm:px-4 sm:py-6">
       <div className="max-w-3xl mx-auto space-y-6">
         {messages.map((msg) => (
           <MessageBubble key={msg.id} msg={msg} />

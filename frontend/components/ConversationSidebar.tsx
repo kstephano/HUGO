@@ -11,9 +11,11 @@ import clsx from "clsx";
 
 interface Props {
   onLogout: () => void;
+  mobileOpen?: boolean;
+  onMobileClose?: () => void;
 }
 
-export function ConversationSidebar({ onLogout }: Props) {
+export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClose }: Props) {
   const [collapsed, setCollapsed] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const settingsRef = useRef<HTMLDivElement>(null);
@@ -51,6 +53,7 @@ export function ConversationSidebar({ onLogout }: Props) {
 
   const handleSelect = async (id: string) => {
     setActive(id);
+    onMobileClose?.();
     try {
       const { items } = await api.messages.list(id);
       setMessages(id, items);
@@ -101,11 +104,26 @@ export function ConversationSidebar({ onLogout }: Props) {
   };
 
   return (
+    <>
+      {/* Mobile backdrop */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/50 md:hidden"
+          onClick={onMobileClose}
+        />
+      )}
+
     <aside
       className={clsx(
-        "flex-shrink-0 flex flex-col h-full bg-[rgba(2,4,14,0.65)] backdrop-blur-md border-r border-[rgb(var(--sidebar-border))]",
-        "transition-[width] duration-300 ease-in-out overflow-hidden",
-        collapsed ? "w-14" : "w-60"
+        "flex flex-col h-full bg-[rgba(2,4,14,0.65)] backdrop-blur-md border-r border-[rgb(var(--sidebar-border))]",
+        // Mobile: fixed drawer sliding in from the left
+        "fixed inset-y-0 left-0 z-40 w-72",
+        "transition-transform duration-300 ease-in-out",
+        mobileOpen ? "translate-x-0" : "-translate-x-full",
+        // Desktop: static inside flex, collapse toggle applies
+        collapsed ? "md:w-14" : "md:w-60",
+        "md:relative md:inset-auto md:z-auto md:translate-x-0 md:flex-shrink-0",
+        "overflow-hidden",
       )}
     >
       {/* Header: logo + collapse toggle */}
@@ -133,7 +151,7 @@ export function ConversationSidebar({ onLogout }: Props) {
         <button
           onClick={() => setCollapsed((c) => !c)}
           className={clsx(
-            "flex-shrink-0 flex items-center justify-center text-[rgb(var(--muted))] hover:text-[rgb(var(--sidebar-fg))] transition-colors",
+            "hidden md:flex flex-shrink-0 items-center justify-center text-[rgb(var(--muted))] hover:text-[rgb(var(--sidebar-fg))] transition-colors",
             collapsed ? "w-14 h-[65px]" : "w-8 h-[65px] mr-1"
           )}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
@@ -302,5 +320,6 @@ export function ConversationSidebar({ onLogout }: Props) {
         </div>
       </div>
     </aside>
+    </>
   );
 }

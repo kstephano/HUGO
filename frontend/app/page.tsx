@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
+import { Menu } from "lucide-react";
 import { api } from "@/lib/api";
 import { useStore } from "@/lib/store";
 import { ConversationSidebar } from "@/components/ConversationSidebar";
@@ -36,6 +37,7 @@ type BootState = "loading" | "ready" | "unauthenticated" | "error";
 export default function HomePage() {
   const [splash, setSplash] = useState<SplashPhase>("show");
   const [boot, setBoot] = useState<BootState>("loading");
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const setUser = useStore((s) => s.setUser);
   const setConversations = useStore((s) => s.setConversations);
@@ -45,7 +47,6 @@ export default function HomePage() {
   const activeId = useStore((s) => s.activeConversationId);
   const connectionStatus = useStore((s) => s.connectionStatus);
 
-  // Splash timing: show for 1.5s, fade over 0.5s, then unmount
   useEffect(() => {
     const timers = [
       setTimeout(() => setSplash("exit"), 1500),
@@ -83,7 +84,6 @@ export default function HomePage() {
     }
   }, [setUser, loadConversations]);
 
-  // Boot sequence: check if already logged in
   useEffect(() => {
     (async () => {
       try {
@@ -127,14 +127,26 @@ export default function HomePage() {
         ) : (
           <>
             <ErrorBoundary>
-              <ConversationSidebar onLogout={() => setBoot("unauthenticated")} />
+              <ConversationSidebar
+                onLogout={() => setBoot("unauthenticated")}
+                mobileOpen={mobileNavOpen}
+                onMobileClose={() => setMobileNavOpen(false)}
+              />
             </ErrorBoundary>
-            <main className="flex-1 flex flex-col overflow-hidden">
+            <main className="flex-1 flex flex-col overflow-hidden min-w-0">
               {activeId && (
                 <ErrorBoundary>
                   <div className="flex items-center gap-2 px-4 py-2 border-b border-[rgb(var(--border))] bg-[rgba(5,9,22,0.7)] backdrop-blur-sm">
+                    {/* Hamburger — mobile only */}
+                    <button
+                      onClick={() => setMobileNavOpen(true)}
+                      className="md:hidden flex items-center justify-center w-7 h-7 -ml-1 text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors"
+                      aria-label="Open menu"
+                    >
+                      <Menu className="w-4 h-4" />
+                    </button>
                     <span
-                      className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                      className={`w-1.5 h-1.5 rounded-full flex-shrink-0 transition-colors ${
                         connectionStatus === "connected"
                           ? "bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.7)]"
                           : connectionStatus === "connecting"
