@@ -133,30 +133,9 @@ export function ChatInterface({ conversationId }: Props) {
     finalizeStreaming();
   };
 
-  const handlePromptClick = (text: string) => {
-    if (isStreaming) return;
-    setErrorMsg(null);
-    const clientMessageId = uuid();
-    appendMessage({
-      id: clientMessageId,
-      conversationId,
-      role: "user",
-      content: text,
-      toolCalls: null,
-      status: "completed",
-      inputTokens: 0,
-      outputTokens: 0,
-      cacheReadTokens: 0,
-      cacheWriteTokens: 0,
-      createdAt: new Date().toISOString(),
-    });
-    wsRef.current?.sendMessage(text, clientMessageId);
-    setIsStreaming(true);
-  };
-
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <MessageList conversationId={conversationId} isPending={isStreaming} onPromptClick={handlePromptClick} />
+      <MessageList conversationId={conversationId} isPending={isStreaming} />
 
       {/* Error banner */}
       {errorMsg && (

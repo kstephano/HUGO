@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { Menu } from "lucide-react";
 import { api } from "@/lib/api";
 import { useStore } from "@/lib/store";
@@ -69,14 +70,13 @@ export default function HomePage() {
         const clean = items.filter((c) => c.title || c.id === untitled[0]?.id);
         setConversations(clean);
 
-        // Prefer the most recent titled conversation; fall back to the single empty one
-        const target = clean.find((c) => c.title) ?? clean[0];
-        setActive(target.id);
-        if (target.title) {
-          try {
-            const { items: msgs } = await api.messages.list(target.id);
-            setMessages(target.id, msgs);
-          } catch {}
+        // Always land on an empty conversation — reuse existing or create a fresh one
+        if (untitled[0]) {
+          setActive(untitled[0].id);
+        } else {
+          const conv = await api.conversations.create();
+          addConversation(conv);
+          setActive(conv.id);
         }
         return;
       }
@@ -84,7 +84,7 @@ export default function HomePage() {
     const conv = await api.conversations.create();
     addConversation(conv);
     setActive(conv.id);
-  }, [setConversations, addConversation, setActive, setMessages]);
+  }, [setConversations, addConversation, setActive]);
 
   const handleLoginSuccess = useCallback(async (user: User) => {
     setUser(user);
@@ -149,7 +149,14 @@ export default function HomePage() {
             </p>
           </div>
         ) : boot === "loading" ? (
-          <div className="flex-1 flex items-center justify-center">
+          <div className="flex-1 flex flex-col items-center justify-center gap-4">
+            <Image
+              src="/images/hugo-logo.png"
+              alt="Hugo"
+              width={52}
+              height={52}
+              className="rounded-full shadow-[0_0_20px_rgba(245,158,11,0.2)] animate-pulse"
+            />
             <span className="text-xs text-[rgb(var(--muted))] tracking-widest uppercase animate-pulse">
               Initialising…
             </span>
