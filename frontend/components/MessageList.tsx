@@ -1,10 +1,15 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useStore } from "@/lib/store";
 import { User } from "lucide-react";
 import type { Message } from "@/lib/types";
 import clsx from "clsx";
+
+const THINKING_WORDS = [
+  "Thinking", "Reasoning", "Analysing", "Pondering", "Considering",
+  "Processing", "Reflecting", "Deliberating", "Weighing", "Calculating",
+];
 
 const STARTER_PROMPTS = [
   "What's in the news today?",
@@ -66,6 +71,16 @@ function MessageBubble({ msg }: { msg: Message }) {
 function StreamingBubble({ isPending }: { isPending: boolean }) {
   const streaming = useStore((s) => s.streaming);
   const active = streaming && !streaming.isComplete;
+  const [thinkWord, setThinkWord] = useState(THINKING_WORDS[0]);
+
+  useEffect(() => {
+    if (!active || !streaming?.thinking) return;
+    const id = setInterval(() => {
+      setThinkWord(THINKING_WORDS[Math.floor(Math.random() * THINKING_WORDS.length)]);
+    }, 1800);
+    return () => clearInterval(id);
+  }, [active, streaming?.thinking]);
+
   if (!active && !isPending) return null;
 
   return (
@@ -86,30 +101,13 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
           </span>
         )}
 
-        {/* Extended thinking — parsed into a high-level thought list */}
-        {active && streaming.thinking && (() => {
-          const thoughts = streaming.thinking
-            .split('\n')
-            .map((l) => l.trim())
-            .filter((l) => l.length > 15);
-          if (thoughts.length === 0) return null;
-          const done = thoughts.slice(0, -1);
-          const current = thoughts[thoughts.length - 1];
-          return (
-            <ul className="mb-2.5 space-y-1">
-              {done.map((t, i) => (
-                <li key={i} className="animate-thought-in flex items-start gap-1.5 text-[11px] text-[rgb(var(--muted))]">
-                  <span className="mt-px flex-shrink-0 text-emerald-500">✓</span>
-                  <span className="line-clamp-1">{t.slice(0, 90)}</span>
-                </li>
-              ))}
-              <li className="flex items-start gap-1.5 text-[11px] text-[rgb(var(--muted))] italic">
-                <span className="mt-1.5 w-1 h-1 flex-shrink-0 rounded-full bg-[rgb(var(--muted))] animate-pulse" />
-                <span className="line-clamp-1">{current.slice(0, 90)}</span>
-              </li>
-            </ul>
-          );
-        })()}
+        {/* Extended thinking — single cycling word */}
+        {active && streaming.thinking && (
+          <p className="mb-2.5 flex items-center gap-1.5 text-[11px] text-[rgb(var(--muted))] italic">
+            <span className="w-1 h-1 rounded-full bg-[rgb(var(--muted))] animate-pulse flex-shrink-0" />
+            {thinkWord}…
+          </p>
+        )}
 
         {/* Tool-use badges */}
         {active && streaming.toolUses.length > 0 && (
