@@ -135,7 +135,11 @@ export function ChatInterface({ conversationId }: Props) {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <MessageList conversationId={conversationId} isPending={isStreaming} />
+      <MessageList
+        conversationId={conversationId}
+        isPending={isStreaming}
+        onPromptSelect={(text) => setInput(text)}
+      />
 
       {/* Error banner */}
       {errorMsg && (

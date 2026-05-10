@@ -18,13 +18,7 @@ interface Props {
 export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClose }: Props) {
   const [collapsed, setCollapsed] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [logoShaking, setLogoShaking] = useState(false);
-
-  const handleLogoClick = () => {
-    if (logoShaking) return;
-    setLogoShaking(true);
-    setTimeout(() => setLogoShaking(false), 550);
-  };
+  const handleLogoClick = () => setCollapsed(true);
   const settingsRef = useRef<HTMLDivElement>(null);
 
   const conversations = useStore((s) => s.conversations);
@@ -154,10 +148,7 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
             width={40}
             height={40}
             onClick={handleLogoClick}
-            className={clsx(
-              "flex-shrink-0 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.2)] cursor-pointer select-none",
-              logoShaking && "animate-shake"
-            )}
+            className="flex-shrink-0 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.2)] cursor-pointer select-none"
           />
           {!collapsed && (
             <p className="text-[rgb(var(--sidebar-fg))] font-semibold tracking-[0.15em] text-sm leading-none whitespace-nowrap">

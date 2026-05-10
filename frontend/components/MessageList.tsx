@@ -11,11 +11,120 @@ const THINKING_WORDS = [
   "Processing", "Reflecting", "Deliberating", "Weighing", "Calculating",
 ];
 
-const OPENING_LINE = "Alright alright alright...";
+const OPENING_LINE = "Alright, alright, alright...";
+
+const SUGGESTED_PROMPTS = [
+  "What happened in the world this week?",
+  "Walk me through how transformers actually work.",
+  "Is it ever ethical to lie? Give me a balanced answer.",
+  "Explain quantum entanglement — I'm smart, not a physicist.",
+  "What's the difference between machine learning and deep learning?",
+  "Help me write a cover letter for a senior PM role.",
+  "Argue both sides of universal basic income.",
+  "Summarise the key global events from the last month.",
+  "I have £50k to invest and I'm 28. What would you suggest?",
+  "What's the hardest unsolved problem facing humanity?",
+];
 
 interface Props {
   conversationId: string;
   isPending?: boolean;
+  onPromptSelect?: (text: string) => void;
+}
+
+function EmptyState({ onPromptSelect }: { onPromptSelect?: (text: string) => void }) {
+  const [promptVisible, setPromptVisible] = useState(false);
+  const [promptPhase, setPromptPhase] = useState<"entering" | "holding" | "leaving">("entering");
+  const [promptIndex, setPromptIndex] = useState(() =>
+    Math.floor(Math.random() * SUGGESTED_PROMPTS.length)
+  );
+  const [promptClicked, setPromptClicked] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setPromptVisible(true), 1000);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    if (!promptVisible) return;
+    let t: ReturnType<typeof setTimeout>;
+    if (promptPhase === "entering") {
+      t = setTimeout(() => setPromptPhase("holding"), 1500);
+    } else if (promptPhase === "holding") {
+      t = setTimeout(() => setPromptPhase("leaving"), 30000);
+    } else {
+      t = setTimeout(() => {
+        setPromptIndex((i) => (i + 1) % SUGGESTED_PROMPTS.length);
+        setPromptPhase("entering");
+        setPromptClicked(false);
+      }, 800);
+    }
+    return () => clearTimeout(t);
+  }, [promptVisible, promptPhase]);
+
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center px-4">
+      {/* Logo + greeting — shifts up when prompt appears */}
+      <div
+        className={clsx(
+          "flex flex-col items-center gap-3 transition-transform duration-700",
+          promptVisible && "-translate-y-8"
+        )}
+      >
+        <Image
+          src="/images/hugo-logo.png"
+          alt="Hugo"
+          width={52}
+          height={52}
+          className="rounded-full shadow-[0_0_20px_rgba(245,158,11,0.2)]"
+        />
+        <p className="text-sm text-[rgb(var(--muted))] italic">{OPENING_LINE}</p>
+      </div>
+
+      {/* Star Wars style prompt card */}
+      {promptVisible && (
+        <div
+          className={clsx(
+            "mt-8 w-full max-w-sm transition-opacity duration-500",
+            promptPhase === "entering" && "animate-sw-enter",
+            promptPhase === "leaving" && "animate-sw-exit",
+            promptClicked && "opacity-40"
+          )}
+        >
+          {/* Perspective crawl container */}
+          <div style={{ perspective: "400px" }}>
+            <div
+              className="bg-black/90 border-t-2 border-b-2 border-[#FFE81F]/40 px-6 py-5 text-center"
+              style={{ transform: "rotateX(10deg)", transformOrigin: "bottom center" }}
+            >
+              <p className="text-[#FFE81F] font-bold italic leading-relaxed text-sm tracking-wide">
+                {SUGGESTED_PROMPTS[promptIndex]}
+              </p>
+            </div>
+          </div>
+
+          {/* Use this button */}
+          <div className="flex justify-center mt-3">
+            <button
+              onClick={() => {
+                if (promptClicked) return;
+                setPromptClicked(true);
+                onPromptSelect?.(SUGGESTED_PROMPTS[promptIndex]);
+              }}
+              className={clsx(
+                "px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] border transition-all",
+                promptClicked
+                  ? "border-[#FFE81F]/25 text-[#FFE81F]/40 cursor-default"
+                  : "border-[#FFE81F]/50 text-[#FFE81F]/70 hover:border-[#FFE81F] hover:text-[#FFE81F] hover:bg-[#FFE81F]/5"
+              )}
+            >
+              {promptClicked ? "Loaded ✓" : "Use this"}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function MessageBubble({ msg }: { msg: Message }) {
@@ -131,7 +240,7 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
   );
 }
 
-export function MessageList({ conversationId, isPending = false }: Props) {
+export function MessageList({ conversationId, isPending = false, onPromptSelect }: Props) {
   const messages = useStore((s) => s.messagesByConv[conversationId] ?? []);
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -140,18 +249,7 @@ export function MessageList({ conversationId, isPending = false }: Props) {
   }, [messages.length, isPending]);
 
   if (messages.length === 0 && !isPending) {
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center px-4 gap-3">
-        <Image
-          src="/images/hugo-logo.png"
-          alt="Hugo"
-          width={52}
-          height={52}
-          className="rounded-full shadow-[0_0_20px_rgba(245,158,11,0.2)]"
-        />
-        <p className="text-sm text-[rgb(var(--muted))] italic">{OPENING_LINE}</p>
-      </div>
-    );
+    return <EmptyState onPromptSelect={onPromptSelect} />;
   }
 
   return (
