@@ -44,6 +44,8 @@ export default function HomePage() {
 
   const setUser = useStore((s) => s.setUser);
   const setConversations = useStore((s) => s.setConversations);
+  const addConversation = useStore((s) => s.addConversation);
+  const setActive = useStore((s) => s.setActiveConversation);
   const setMessages = useStore((s) => s.setMessages);
   const activeId = useStore((s) => s.activeConversationId);
   const connectionStatus = useStore((s) => s.connectionStatus);
@@ -57,26 +59,30 @@ export default function HomePage() {
   }, []);
 
   const loadConversations = useCallback(async (rememberConversations: boolean) => {
-    if (!rememberConversations) return;
-    const { items } = await api.conversations.list();
-    // Delete all untitled conversations left over from previous sessions
-    const untitled = items.filter((c) => !c.title);
-    for (const c of untitled) {
-      try { await api.conversations.delete(c.id); } catch {}
+    if (rememberConversations) {
+      const { items } = await api.conversations.list();
+      // Clean up any untitled conversations left from previous sessions
+      const untitled = items.filter((c) => !c.title);
+      for (const c of untitled) {
+        try { await api.conversations.delete(c.id); } catch {}
+      }
+      const titled = items.filter((c) => c.title);
+      setConversations(titled);
+      // Preload all messages in background for instant switching
+      Promise.allSettled(
+        titled.map(async (conv) => {
+          try {
+            const { items: msgs } = await api.messages.list(conv.id);
+            setMessages(conv.id, msgs);
+          } catch {}
+        })
+      );
     }
-    const titled = items.filter((c) => c.title);
-    setConversations(titled);
-    // No active conversation by default — user picks or clicks New Chat
-    // Preload all messages in background for instant switching
-    Promise.allSettled(
-      titled.map(async (conv) => {
-        try {
-          const { items: msgs } = await api.messages.list(conv.id);
-          setMessages(conv.id, msgs);
-        } catch {}
-      })
-    );
-  }, [setConversations, setMessages]);
+    // Always open a fresh empty conversation on login
+    const conv = await api.conversations.create();
+    addConversation(conv);
+    setActive(conv.id);
+  }, [setConversations, addConversation, setActive, setMessages]);
 
   const handleLoginSuccess = useCallback(async (user: User) => {
     setUser(user);

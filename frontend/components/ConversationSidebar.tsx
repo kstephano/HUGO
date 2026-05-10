@@ -182,13 +182,14 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
   const handleConfirmToggle = async () => {
     if (!user || pendingToggle === null) return;
     try {
-      const updated = await api.auth.settings(pendingToggle);
-      setUser(updated);
       if (!pendingToggle) {
-        // Turning off — clear history locally too
+        // Turning off — wipe all history on the backend then clear locally
+        await api.conversations.deleteAll();
         setConversations([]);
         setActive(null);
       }
+      const updated = await api.auth.settings(pendingToggle);
+      setUser(updated);
     } catch (e) {
       console.error("settings_update_error", e);
     }
