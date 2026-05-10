@@ -58,6 +58,18 @@
   animation: sw-exit 0.8s ease forwards;
 }
 
+/* ── Conversation removal ───────────────────────────────────────── */
+@keyframes conv-remove {
+  0%   { opacity: 1; max-height: 44px; transform: translateX(0) scaleY(1); padding-top: 8px; padding-bottom: 8px; }
+  40%  { opacity: 0; transform: translateX(-14px) scaleY(1); }
+  100% { opacity: 0; max-height: 0; transform: translateX(-14px) scaleY(0.8); padding-top: 0; padding-bottom: 0; }
+}
+.animate-conv-remove {
+  animation: conv-remove 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  overflow: hidden;
+  transform-origin: top;
+}
+
 /* ── Thought list ───────────────────────────────────────────────── */
 @keyframes thought-in {
   from { opacity: 0; transform: translateY(-3px); }
