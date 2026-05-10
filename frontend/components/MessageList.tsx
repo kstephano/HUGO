@@ -198,6 +198,9 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
   const active = isActive ? streaming : null;
   const [spinVerb, setSpinVerb] = useState(randomVerb);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [displayedText, setDisplayedText] = useState("");
+  const fullTextRef = useRef("");
+  const displayedLenRef = useRef(0);
 
   useEffect(() => {
     if (!isActive) return;
@@ -209,6 +212,29 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
     if (!isActive) { setElapsedSeconds(0); return; }
     setElapsedSeconds(0);
     const id = setInterval(() => setElapsedSeconds((s) => s + 1), 1000);
+    return () => clearInterval(id);
+  }, [isActive]);
+
+  // Keep fullTextRef in sync with incoming deltas
+  useEffect(() => {
+    if (active) fullTextRef.current = active.text;
+  }, [active?.text]);
+
+  // Typewriter: reset on stream start; drip chars with adaptive catch-up
+  useEffect(() => {
+    if (!isActive) return;
+    displayedLenRef.current = 0;
+    setDisplayedText("");
+    const id = setInterval(() => {
+      const full = fullTextRef.current;
+      const cur = displayedLenRef.current;
+      if (cur >= full.length) return;
+      const debt = full.length - cur;
+      const step = debt > 300 ? 20 : debt > 100 ? 6 : debt > 30 ? 2 : 1;
+      const next = Math.min(cur + step, full.length);
+      displayedLenRef.current = next;
+      setDisplayedText(full.slice(0, next));
+    }, 16);
     return () => clearInterval(id);
   }, [isActive]);
 
@@ -270,7 +296,7 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
         {active && (
           <div className="relative">
             <div className="prose prose-sm prose-invert max-w-none break-words">
-              <Markdown>{active.text}</Markdown>
+              <Markdown>{displayedText}</Markdown>
             </div>
             <span className="inline-block w-0.5 h-[1em] bg-[rgb(var(--fg))] opacity-70 animate-pulse ml-0.5 align-text-bottom rounded-full" />
           </div>
