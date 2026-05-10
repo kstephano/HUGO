@@ -8,10 +8,26 @@ import { User } from "lucide-react";
 import type { Message } from "@/lib/types";
 import clsx from "clsx";
 
-const THINKING_WORDS = [
-  "Thinking", "Reasoning", "Analysing", "Pondering", "Considering",
-  "Processing", "Reflecting", "Deliberating", "Weighing", "Calculating",
-];
+const SPINNER_VERBS = [
+  "Beaming", "Booping", "Bouncing", "Brewing", "Bubbling", "Chasing",
+  "Churning", "Coalescing", "Conjuring", "Cooking", "Crafting", "Crunching",
+  "Cuddling", "Dancing", "Dazzling", "Discovering", "Doodling", "Dreaming",
+  "Drifting", "Enchanting", "Exploring", "Finding", "Floating", "Fluttering",
+  "Foraging", "Forging", "Frolicking", "Gathering", "Giggling", "Gliding",
+  "Greeting", "Growing", "Hatching", "Herding", "Honking", "Hopping",
+  "Hugging", "Humming", "Imagining", "Inventing", "Jingling", "Juggling",
+  "Jumping", "Kindling", "Knitting", "Launching", "Leaping", "Mapping",
+  "Marinating", "Meandering", "Mixing", "Moseying", "Munching", "Napping",
+  "Nibbling", "Noodling", "Orbiting", "Painting", "Percolating", "Petting",
+  "Plotting", "Pondering", "Popping", "Prancing", "Purring", "Puzzling",
+  "Questing", "Riding", "Roaming", "Rolling", "Sauteeing", "Scribbling",
+  "Seeking", "Shimmying", "Singing", "Skipping", "Sleeping", "Snacking",
+  "Sniffing", "Snuggling", "Soaring", "Sparking", "Spinning", "Splashing",
+  "Sprouting", "Squishing", "Stargazing", "Stirring", "Strolling", "Swimming",
+  "Swinging", "Tickling", "Tinkering", "Toasting", "Tumbling", "Twirling",
+  "Waddling", "Wandering", "Watching", "Weaving", "Whistling", "Wibbling",
+  "Wiggling", "Wishing", "Wobbling", "Wondering", "Yawning", "Zooming",
+] as const;
 
 const OPENING_LINE = "Alright, alright, alright...";
 
@@ -175,18 +191,18 @@ function MessageBubble({ msg }: { msg: Message }) {
   );
 }
 
+const randomVerb = () => SPINNER_VERBS[Math.floor(Math.random() * SPINNER_VERBS.length)];
+
 function StreamingBubble({ isPending }: { isPending: boolean }) {
   const streaming = useStore((s) => s.streaming);
   const active = streaming && !streaming.isComplete;
-  const [thinkWord, setThinkWord] = useState(THINKING_WORDS[0]);
+  const [spinVerb, setSpinVerb] = useState(randomVerb);
 
   useEffect(() => {
-    if (!active || !streaming?.thinking) return;
-    const id = setInterval(() => {
-      setThinkWord(THINKING_WORDS[Math.floor(Math.random() * THINKING_WORDS.length)]);
-    }, 1800);
+    if (!active) return;
+    const id = setInterval(() => setSpinVerb(randomVerb()), 3000);
     return () => clearInterval(id);
-  }, [active, streaming?.thinking]);
+  }, [active]);
 
   if (!active && !isPending) return null;
 
@@ -201,18 +217,18 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
       <div className="max-w-[72%] rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm leading-relaxed bg-[rgb(var(--bubble-assistant))] text-[rgb(var(--fg))] border border-[rgb(var(--border))] shadow-sm">
         {/* Pending state — no tokens yet */}
         {isPending && !active && (
-          <span className="flex items-center gap-1.5 text-[rgb(var(--muted))] text-xs italic">
-            <span className="w-1 h-1 rounded-full bg-[rgb(var(--muted))] animate-bounce [animation-delay:0ms]" />
-            <span className="w-1 h-1 rounded-full bg-[rgb(var(--muted))] animate-bounce [animation-delay:150ms]" />
-            <span className="w-1 h-1 rounded-full bg-[rgb(var(--muted))] animate-bounce [animation-delay:300ms]" />
+          <span className="flex items-center gap-1.5 text-xs italic" style={{ color: "#FFE81F" }}>
+            <span className="w-1 h-1 rounded-full animate-bounce [animation-delay:0ms]" style={{ backgroundColor: "#FFE81F" }} />
+            <span className="w-1 h-1 rounded-full animate-bounce [animation-delay:150ms]" style={{ backgroundColor: "#FFE81F" }} />
+            <span className="w-1 h-1 rounded-full animate-bounce [animation-delay:300ms]" style={{ backgroundColor: "#FFE81F" }} />
           </span>
         )}
 
-        {/* Extended thinking — single cycling word */}
-        {active && streaming.thinking && (
-          <p className="mb-2.5 flex items-center gap-1.5 text-[11px] text-[rgb(var(--muted))] italic">
-            <span className="w-1 h-1 rounded-full bg-[rgb(var(--muted))] animate-pulse flex-shrink-0" />
-            {thinkWord}…
+        {/* Thinking — cycling verb */}
+        {active && (
+          <p className="mb-2.5 flex items-center gap-1.5 text-[11px] italic" style={{ color: "#FFE81F" }}>
+            <span className="w-1 h-1 rounded-full animate-pulse flex-shrink-0" style={{ backgroundColor: "#FFE81F" }} />
+            {spinVerb}…
           </p>
         )}
 
