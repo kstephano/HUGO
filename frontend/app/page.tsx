@@ -44,8 +44,6 @@ export default function HomePage() {
 
   const setUser = useStore((s) => s.setUser);
   const setConversations = useStore((s) => s.setConversations);
-  const addConversation = useStore((s) => s.addConversation);
-  const setActive = useStore((s) => s.setActiveConversation);
   const setMessages = useStore((s) => s.setMessages);
   const activeId = useStore((s) => s.activeConversationId);
   const connectionStatus = useStore((s) => s.connectionStatus);
@@ -59,44 +57,26 @@ export default function HomePage() {
   }, []);
 
   const loadConversations = useCallback(async (rememberConversations: boolean) => {
-    if (rememberConversations) {
-      const { items } = await api.conversations.list();
-      if (items.length > 0) {
-        // Delete any surplus empty (untitled) conversations — keep at most one
-        const untitled = items.filter((c) => !c.title);
-        for (const c of untitled.slice(1)) {
-          try { await api.conversations.delete(c.id); } catch {}
-        }
-        const clean = items.filter((c) => c.title || c.id === untitled[0]?.id);
-        setConversations(clean);
-
-        // Always land on an empty conversation — reuse existing or create a fresh one
-        if (untitled[0]) {
-          setActive(untitled[0].id);
-        } else {
-          const conv = await api.conversations.create();
-          addConversation(conv);
-          setActive(conv.id);
-        }
-
-        // Preload all titled conversation messages in the background so
-        // switching conversations is instant — no per-click fetch delay
-        const titled = clean.filter((c) => c.title);
-        Promise.allSettled(
-          titled.map(async (conv) => {
-            try {
-              const { items: msgs } = await api.messages.list(conv.id);
-              setMessages(conv.id, msgs);
-            } catch {}
-          })
-        );
-        return;
-      }
+    if (!rememberConversations) return;
+    const { items } = await api.conversations.list();
+    // Delete all untitled conversations left over from previous sessions
+    const untitled = items.filter((c) => !c.title);
+    for (const c of untitled) {
+      try { await api.conversations.delete(c.id); } catch {}
     }
-    const conv = await api.conversations.create();
-    addConversation(conv);
-    setActive(conv.id);
-  }, [setConversations, addConversation, setActive, setMessages]);
+    const titled = items.filter((c) => c.title);
+    setConversations(titled);
+    // No active conversation by default — user picks or clicks New Chat
+    // Preload all messages in background for instant switching
+    Promise.allSettled(
+      titled.map(async (conv) => {
+        try {
+          const { items: msgs } = await api.messages.list(conv.id);
+          setMessages(conv.id, msgs);
+        } catch {}
+      })
+    );
+  }, [setConversations, setMessages]);
 
   const handleLoginSuccess = useCallback(async (user: User) => {
     setUser(user);
@@ -187,7 +167,7 @@ export default function HomePage() {
               onTouchStart={onSwipeStart}
               onTouchEnd={onSwipeEnd}
             >
-              {activeId && (
+              {activeId ? (
                 <ErrorBoundary>
                   <div className="flex items-center gap-2 px-4 py-2 border-b border-[rgb(var(--border))] bg-[rgba(5,9,22,0.7)] backdrop-blur-sm">
                     {/* Hamburger — mobile only */}
@@ -213,6 +193,19 @@ export default function HomePage() {
                   </div>
                   <ChatInterface conversationId={activeId} />
                 </ErrorBoundary>
+              ) : (
+                <div className="flex-1 flex flex-col items-center justify-center gap-3 select-none">
+                  <Image
+                    src="/images/hugo-logo.png"
+                    alt="Hugo"
+                    width={44}
+                    height={44}
+                    className="rounded-full opacity-20"
+                  />
+                  <p className="text-xs text-[rgb(var(--muted))] opacity-50 tracking-widest uppercase">
+                    Select a chat or start a new one
+                  </p>
+                </div>
               )}
             </main>
           </>
