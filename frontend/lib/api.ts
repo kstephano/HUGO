@@ -28,6 +28,16 @@ export const api = {
         method: "POST",
         body: JSON.stringify({ email, display_name: displayName }),
       }),
+    register: (email: string, displayName: string, password: string) =>
+      request<User>("/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify({ email, displayName, password }),
+      }),
+    emailLogin: (email: string, password: string) =>
+      request<User>("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      }),
     me: () => request<User>("/api/auth/me"),
     logout: () => request<{ ok: boolean }>("/api/auth/logout", { method: "POST" }),
     wsTicket: () => request<{ ticket: string }>("/api/auth/ws-ticket"),

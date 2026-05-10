@@ -11,20 +11,45 @@ declare global {
   }
 }
 
+type Mode = "main" | "login" | "register";
+
 interface Props {
   onSuccess: (user: User) => void;
 }
 
+const inputClass =
+  "w-full px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 " +
+  "text-sm text-white placeholder:text-slate-600 " +
+  "focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:border-purple-500/40 " +
+  "disabled:opacity-40 transition-all";
+
+const btnClass =
+  "w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-purple-700 " +
+  "hover:from-purple-500 hover:to-purple-600 " +
+  "text-white text-sm font-medium tracking-wide " +
+  "disabled:opacity-30 disabled:cursor-not-allowed " +
+  "transition-all shadow-[0_0_16px_rgba(147,51,234,0.35)] hover:shadow-[0_0_22px_rgba(147,51,234,0.55)]";
+
 export function LoginPage({ onSuccess }: Props) {
   const buttonRef = useRef<HTMLDivElement>(null);
-  const [devEmail, setDevEmail] = useState("");
+  const [mode, setMode] = useState<Mode>("main");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Email login fields
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+
+  // Register fields
+  const [regName, setRegName] = useState("");
+  const [regEmail, setRegEmail] = useState("");
+  const [regPassword, setRegPassword] = useState("");
+  const [regConfirm, setRegConfirm] = useState("");
 
   const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
   useEffect(() => {
-    if (!googleClientId) return;
+    if (!googleClientId || mode !== "main") return;
 
     const initGoogle = () => {
       window.google?.accounts.id.initialize({
@@ -65,21 +90,49 @@ export function LoginPage({ onSuccess }: Props) {
       script.onload = initGoogle;
       document.head.appendChild(script);
     }
-  }, [googleClientId]);
+  }, [googleClientId, mode]);
 
-  const handleDevLogin = async (e: React.FormEvent) => {
+  const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!devEmail.trim()) return;
     setLoading(true);
     setError(null);
     try {
-      const user = await api.auth.devLogin(devEmail.trim(), devEmail.split("@")[0]);
+      const user = await api.auth.emailLogin(loginEmail.trim(), loginPassword);
       onSuccess(user);
-    } catch {
-      setError("Login failed. Please try again.");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "";
+      setError(msg.includes("401") ? "Invalid email or password." : "Sign in failed. Please try again.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (regPassword !== regConfirm) {
+      setError("Passwords don't match.");
+      return;
+    }
+    if (regPassword.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const user = await api.auth.register(regEmail.trim(), regName.trim(), regPassword);
+      onSuccess(user);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "";
+      setError(msg.includes("409") ? "An account with this email already exists." : "Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const switchMode = (next: Mode) => {
+    setError(null);
+    setMode(next);
   };
 
   return (
@@ -102,55 +155,153 @@ export function LoginPage({ onSuccess }: Props) {
           </div>
         </div>
 
-        {/* Sign-in card */}
-        <div className="w-full bg-white/[0.03] border border-white/10 rounded-2xl p-6 flex flex-col items-center gap-5">
-          <p className="text-sm text-slate-400 text-center">Sign in to continue</p>
+        {/* Card */}
+        <div className="w-full bg-white/[0.03] border border-white/10 rounded-2xl p-6 flex flex-col gap-5">
 
-          {/* Google button container */}
-          {googleClientId && (
-            <div
-              ref={buttonRef}
-              className={`overflow-hidden rounded-xl${loading ? " opacity-50 pointer-events-none" : ""}`}
-            />
-          )}
+          {/* ── Main: Google + email options ── */}
+          {mode === "main" && (
+            <>
+              <p className="text-sm text-slate-400 text-center">Sign in to continue</p>
 
-          {/* Dev login fallback */}
-          {!googleClientId && (
-            <form onSubmit={handleDevLogin} className="w-full flex flex-col gap-3">
-              <p className="text-[10px] text-slate-600 text-center uppercase tracking-wider">
-                Dev mode — no Google Client ID configured
-              </p>
-              <input
-                type="email"
-                placeholder="your@email.com"
-                value={devEmail}
-                onChange={(e) => setDevEmail(e.target.value)}
-                disabled={loading}
-                className="w-full px-4 py-2.5 rounded-xl border border-white/10 bg-white/5
-                  text-sm text-white placeholder:text-slate-600
-                  focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:border-purple-500/40
-                  disabled:opacity-40 transition-all"
-              />
+              {googleClientId && (
+                <div
+                  ref={buttonRef}
+                  className={`overflow-hidden rounded-xl${loading ? " opacity-50 pointer-events-none" : ""}`}
+                />
+              )}
+
+              <div className="flex items-center gap-3">
+                <div className="flex-1 h-px bg-white/10" />
+                <span className="text-[11px] text-slate-600 uppercase tracking-widest">or</span>
+                <div className="flex-1 h-px bg-white/10" />
+              </div>
+
               <button
-                type="submit"
-                disabled={loading || !devEmail.trim()}
-                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-purple-700
-                  hover:from-purple-500 hover:to-purple-600
-                  text-white text-sm font-medium tracking-wide
-                  disabled:opacity-30 disabled:cursor-not-allowed
-                  transition-all shadow-[0_0_16px_rgba(147,51,234,0.35)]"
+                onClick={() => switchMode("login")}
+                className={btnClass}
               >
-                {loading ? "Signing in…" : "Continue"}
+                Sign in with email
               </button>
-            </form>
+
+              <p className="text-center text-xs text-slate-500">
+                No account?{" "}
+                <button onClick={() => switchMode("register")} className="text-purple-400 hover:text-purple-300 transition-colors">
+                  Create one
+                </button>
+              </p>
+            </>
           )}
 
-          {loading && googleClientId && (
-            <p className="text-xs text-slate-500 animate-pulse">Signing in…</p>
+          {/* ── Email login ── */}
+          {mode === "login" && (
+            <>
+              <div className="flex items-center gap-2">
+                <button onClick={() => switchMode("main")} className="text-slate-500 hover:text-slate-300 transition-colors text-xs">
+                  ← Back
+                </button>
+                <p className="text-sm text-slate-400 flex-1 text-center pr-6">Sign in</p>
+              </div>
+
+              <form onSubmit={handleEmailLogin} className="flex flex-col gap-3">
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                  required
+                  disabled={loading}
+                  className={inputClass}
+                />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  required
+                  disabled={loading}
+                  className={inputClass}
+                />
+                <button type="submit" disabled={loading || !loginEmail || !loginPassword} className={btnClass}>
+                  {loading ? "Signing in…" : "Sign in"}
+                </button>
+              </form>
+
+              <p className="text-center text-xs text-slate-500">
+                No account?{" "}
+                <button onClick={() => switchMode("register")} className="text-purple-400 hover:text-purple-300 transition-colors">
+                  Create one
+                </button>
+              </p>
+            </>
+          )}
+
+          {/* ── Register ── */}
+          {mode === "register" && (
+            <>
+              <div className="flex items-center gap-2">
+                <button onClick={() => switchMode("main")} className="text-slate-500 hover:text-slate-300 transition-colors text-xs">
+                  ← Back
+                </button>
+                <p className="text-sm text-slate-400 flex-1 text-center pr-6">Create account</p>
+              </div>
+
+              <form onSubmit={handleRegister} className="flex flex-col gap-3">
+                <input
+                  type="text"
+                  placeholder="Your name"
+                  value={regName}
+                  onChange={(e) => setRegName(e.target.value)}
+                  required
+                  disabled={loading}
+                  className={inputClass}
+                />
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={regEmail}
+                  onChange={(e) => setRegEmail(e.target.value)}
+                  required
+                  disabled={loading}
+                  className={inputClass}
+                />
+                <input
+                  type="password"
+                  placeholder="Password (min 8 characters)"
+                  value={regPassword}
+                  onChange={(e) => setRegPassword(e.target.value)}
+                  required
+                  disabled={loading}
+                  className={inputClass}
+                />
+                <input
+                  type="password"
+                  placeholder="Confirm password"
+                  value={regConfirm}
+                  onChange={(e) => setRegConfirm(e.target.value)}
+                  required
+                  disabled={loading}
+                  className={inputClass}
+                />
+                <button
+                  type="submit"
+                  disabled={loading || !regName || !regEmail || !regPassword || !regConfirm}
+                  className={btnClass}
+                >
+                  {loading ? "Creating account…" : "Create account"}
+                </button>
+              </form>
+
+              <p className="text-center text-xs text-slate-500">
+                Already have an account?{" "}
+                <button onClick={() => switchMode("login")} className="text-purple-400 hover:text-purple-300 transition-colors">
+                  Sign in
+                </button>
+              </p>
+            </>
           )}
 
           {error && (
-            <p className="text-xs text-red-400 text-center">{error}</p>
+            <p className="text-xs text-red-400 text-center -mt-1">{error}</p>
           )}
         </div>
       </div>

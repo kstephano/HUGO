@@ -10,8 +10,12 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import get_settings
 from app.core.dependencies import get_current_user_id, get_db, get_redis_dep
+from app.core.security import hash_password, verify_password
 from app.db.models import User
-from app.schemas.auth import DevLoginRequest, GoogleLoginRequest, SessionResponse, SettingsUpdateRequest
+from app.schemas.auth import (
+    DevLoginRequest, EmailLoginRequest, EmailRegisterRequest,
+    GoogleLoginRequest, SessionResponse, SettingsUpdateRequest,
+)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -88,6 +92,48 @@ async def google_login(
 
     await db.commit()
     await db.refresh(user)
+    await _create_session(user, response, redis, settings)
+    return _session_response(user)
+
+
+@router.post("/register", response_model=SessionResponse, status_code=201)
+async def email_register(
+    payload: EmailRegisterRequest,
+    response: Response,
+    db: AsyncSession = Depends(get_db),
+    redis=Depends(get_redis_dep),
+):
+    """Create a new account with email and password."""
+    settings = get_settings()
+    result = await db.execute(select(User).where(User.email == payload.email))
+    if result.scalar_one_or_none() is not None:
+        raise HTTPException(status_code=409, detail="An account with this email already exists")
+    user = User(
+        id=str(uuid.uuid4()),
+        email=payload.email,
+        display_name=payload.display_name,
+        password_hash=hash_password(payload.password),
+    )
+    db.add(user)
+    await db.commit()
+    await db.refresh(user)
+    await _create_session(user, response, redis, settings)
+    return _session_response(user)
+
+
+@router.post("/login", response_model=SessionResponse)
+async def email_login(
+    payload: EmailLoginRequest,
+    response: Response,
+    db: AsyncSession = Depends(get_db),
+    redis=Depends(get_redis_dep),
+):
+    """Sign in with email and password."""
+    settings = get_settings()
+    result = await db.execute(select(User).where(User.email == payload.email))
+    user = result.scalar_one_or_none()
+    if user is None or not user.password_hash or not verify_password(payload.password, user.password_hash):
+        raise HTTPException(status_code=401, detail="Invalid email or password")
     await _create_session(user, response, redis, settings)
     return _session_response(user)
 
