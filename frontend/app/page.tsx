@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Menu } from "lucide-react";
 import { api } from "@/lib/api";
 import { useStore } from "@/lib/store";
@@ -38,6 +38,8 @@ export default function HomePage() {
   const [splash, setSplash] = useState<SplashPhase>("show");
   const [boot, setBoot] = useState<BootState>("loading");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const swipeStartX = useRef<number | null>(null);
+  const swipeStartY = useRef<number | null>(null);
 
   const setUser = useStore((s) => s.setUser);
   const setConversations = useStore((s) => s.setConversations);
@@ -102,6 +104,23 @@ export default function HomePage() {
     })();
   }, []);
 
+  const onSwipeStart = (e: React.TouchEvent) => {
+    swipeStartX.current = e.touches[0].clientX;
+    swipeStartY.current = e.touches[0].clientY;
+  };
+
+  const onSwipeEnd = (e: React.TouchEvent) => {
+    if (swipeStartX.current === null || swipeStartY.current === null) return;
+    const dx = e.changedTouches[0].clientX - swipeStartX.current;
+    const dy = e.changedTouches[0].clientY - swipeStartY.current;
+    swipeStartX.current = null;
+    swipeStartY.current = null;
+    // Only act on clearly horizontal swipes (at least 50px, more horizontal than vertical)
+    if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy)) return;
+    if (dx > 0) setMobileNavOpen(true);
+    else setMobileNavOpen(false);
+  };
+
   if (boot === "unauthenticated") {
     return <LoginPage onSuccess={handleLoginSuccess} />;
   }
@@ -133,7 +152,11 @@ export default function HomePage() {
                 onMobileClose={() => setMobileNavOpen(false)}
               />
             </ErrorBoundary>
-            <main className="flex-1 flex flex-col overflow-hidden min-w-0">
+            <main
+              className="flex-1 flex flex-col overflow-hidden min-w-0"
+              onTouchStart={onSwipeStart}
+              onTouchEnd={onSwipeEnd}
+            >
               {activeId && (
                 <ErrorBoundary>
                   <div className="flex items-center gap-2 px-4 py-2 border-b border-[rgb(var(--border))] bg-[rgba(5,9,22,0.7)] backdrop-blur-sm">
