@@ -6,7 +6,7 @@
 import { useEffect, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 import Image from "next/image";
-import { Camera, FileText, ImagePlus, Square, X } from "lucide-react";
+import { FileText, ImagePlus, Square, X } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { HugoWebSocket } from "@/lib/ws";
 import { MessageList } from "./MessageList";
@@ -26,7 +26,6 @@ export function ChatInterface({ conversationId }: Props) {
   const wsRef = useRef<HugoWebSocket | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
-  const cameraInputRef = useRef<HTMLInputElement>(null);
   const pdfInputRef = useRef<HTMLInputElement>(null);
 
   const messages = useStore((s) => s.messagesByConv[conversationId] ?? []);
@@ -197,8 +196,6 @@ export function ChatInterface({ conversationId }: Props) {
         {/* Hidden file inputs */}
         <input ref={imageInputRef} type="file" accept="image/jpeg,image/png,image/gif,image/webp" className="hidden"
           onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileSelect(f); e.target.value = ""; }} />
-        <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden"
-          onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileSelect(f); e.target.value = ""; }} />
         <input ref={pdfInputRef} type="file" accept="application/pdf" className="hidden"
           onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileSelect(f); e.target.value = ""; }} />
 
@@ -226,18 +223,6 @@ export function ChatInterface({ conversationId }: Props) {
         )}
 
         <div className="max-w-3xl mx-auto flex items-end gap-2">
-          {/* Camera button */}
-          <button
-            onClick={() => cameraInputRef.current?.click()}
-            disabled={isStreaming}
-            className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-xl
-              border border-[rgb(var(--border))] text-[rgb(var(--muted))]
-              hover:text-purple-400 hover:border-purple-500/40
-              disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-            aria-label="Take photo"
-          >
-            <Camera className="w-4 h-4" />
-          </button>
           {/* Image attach button */}
           <button
             onClick={() => imageInputRef.current?.click()}
