@@ -59,6 +59,8 @@ async def run_loop(
     embed_provider: EmbeddingProvider,
     registry: ToolRegistry,
     send: SendFn,
+    image_data: str | None = None,
+    image_media_type: str | None = None,
 ) -> None:
     settings = get_settings()
     conversation = await load_conversation(db, conversation_id, user_id)
@@ -71,7 +73,15 @@ async def run_loop(
     # identity map (expire_on_commit=False) and returns stale cached messages.
     messages = build_messages(conversation)
     await save_user_message(db, conversation_id, user_content, client_message_id)
-    messages.append({"role": "user", "content": user_content})
+    if image_data and image_media_type:
+        user_blocks: list[dict] = [
+            {"type": "image", "source": {"type": "base64", "media_type": image_media_type, "data": image_data}},
+        ]
+        if user_content:
+            user_blocks.append({"type": "text", "text": user_content})
+        messages.append({"role": "user", "content": user_blocks})
+    else:
+        messages.append({"role": "user", "content": user_content})
 
     accumulated_text: list[str] = []
     accumulated_thinking: list[str] = []

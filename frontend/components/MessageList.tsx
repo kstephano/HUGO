@@ -177,9 +177,15 @@ function MessageBubble({ msg }: { msg: Message }) {
             : "bg-[rgb(var(--bubble-assistant))] text-[rgb(var(--fg))] border border-[rgb(var(--border))] rounded-bl-sm shadow-sm"
         )}
       >
-        <div className="prose prose-sm prose-invert max-w-none break-words">
-          <Markdown>{text}</Markdown>
-        </div>
+        {msg.imagePreview && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={msg.imagePreview} alt="Attached" className="mb-2 max-h-48 w-auto rounded-lg object-cover" />
+        )}
+        {text && (
+          <div className="prose prose-sm prose-invert max-w-none break-words">
+            <Markdown>{text}</Markdown>
+          </div>
+        )}
         {msg.status === "cancelled" && (
           <span className="mt-1 block text-[10px] opacity-50 italic">generation stopped</span>
         )}

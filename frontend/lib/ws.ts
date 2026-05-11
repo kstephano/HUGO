@@ -85,8 +85,13 @@ export class HugoWebSocket {
     this.send({ type: "handshake", conversation_id: conversationId });
   }
 
-  sendMessage(content: string, clientMessageId: string) {
-    this.send({ type: "message", content, client_message_id: clientMessageId });
+  sendMessage(content: string, clientMessageId: string, imageData?: string, imageMediaType?: string) {
+    this.send({
+      type: "message",
+      content,
+      client_message_id: clientMessageId,
+      ...(imageData && imageMediaType ? { image_data: imageData, image_media_type: imageMediaType } : {}),
+    });
   }
 
   sendCancel() {

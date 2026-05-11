@@ -6,7 +6,7 @@
 import { useEffect, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 import Image from "next/image";
-import { Square } from "lucide-react";
+import { ImagePlus, Square, X } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { HugoWebSocket } from "@/lib/ws";
 import { MessageList } from "./MessageList";
@@ -21,8 +21,10 @@ export function ChatInterface({ conversationId }: Props) {
   const [isStreaming, setIsStreaming] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [inputVisible, setInputVisible] = useState(true);
+  const [attachedImage, setAttachedImage] = useState<{ data: string; mediaType: string; preview: string } | null>(null);
   const wsRef = useRef<HugoWebSocket | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const messages = useStore((s) => s.messagesByConv[conversationId] ?? []);
   const setConnectionStatus = useStore((s) => s.setConnectionStatus);
@@ -115,8 +117,23 @@ export function ChatInterface({ conversationId }: Props) {
     el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
   }, [input]);
 
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      const [header, data] = dataUrl.split(",");
+      const mediaType = header.match(/:(.*?);/)?.[1] ?? "image/jpeg";
+      setAttachedImage({ data, mediaType, preview: dataUrl });
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
   const sendContent = (content: string) => {
-    if (!content.trim() || isStreaming) return;
+    if (!content.trim() && !attachedImage) return;
+    if (isStreaming) return;
     setInputVisible(true);
     setErrorMsg(null);
     const clientMessageId = uuid();
@@ -132,9 +149,11 @@ export function ChatInterface({ conversationId }: Props) {
       cacheReadTokens: 0,
       cacheWriteTokens: 0,
       createdAt: new Date().toISOString(),
+      imagePreview: attachedImage?.preview,
     });
-    wsRef.current?.sendMessage(content, clientMessageId);
+    wsRef.current?.sendMessage(content, clientMessageId, attachedImage?.data, attachedImage?.mediaType);
     setInput("");
+    setAttachedImage(null);
     setIsStreaming(true);
   };
 
@@ -166,7 +185,43 @@ export function ChatInterface({ conversationId }: Props) {
 
       {/* Input bar — hidden until user acts on empty conversation */}
       {showInputBar && <div className="flex-shrink-0 border-t border-[rgb(var(--border))] bg-[rgba(5,9,22,0.82)] backdrop-blur-sm px-3 py-2 sm:px-4 sm:py-3">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/gif,image/webp"
+          className="hidden"
+          onChange={handleImageSelect}
+        />
+
+        {/* Attached image preview */}
+        {attachedImage && (
+          <div className="max-w-3xl mx-auto mb-2">
+            <div className="relative inline-block">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={attachedImage.preview} alt="Attached" className="h-16 w-auto rounded-lg border border-purple-500/30 object-cover" />
+              <button
+                onClick={() => setAttachedImage(null)}
+                className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-[rgb(var(--bg))] border border-[rgb(var(--border))] flex items-center justify-center text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors"
+              >
+                <X className="w-2.5 h-2.5" />
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="max-w-3xl mx-auto flex items-end gap-3">
+          {/* Image attach button */}
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isStreaming}
+            className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl
+              border border-[rgb(var(--border))] text-[rgb(var(--muted))]
+              hover:text-purple-400 hover:border-purple-500/40
+              disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            aria-label="Attach image"
+          >
+            <ImagePlus className="w-4 h-4" />
+          </button>
           <textarea
             ref={textareaRef}
             value={input}
@@ -203,7 +258,7 @@ export function ChatInterface({ conversationId }: Props) {
           ) : (
             <button
               onClick={handleSend}
-              disabled={!input.trim()}
+              disabled={!input.trim() && !attachedImage}
               className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl
                 bg-[rgba(10,8,20,0.92)] border border-purple-500/25
                 hover:border-purple-400/50 hover:bg-[rgba(20,12,40,0.95)]

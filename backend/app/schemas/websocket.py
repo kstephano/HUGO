@@ -13,6 +13,8 @@ class WsUserMessage(BaseModel):
     type: Literal["message"] = "message"
     content: str
     client_message_id: str
+    image_data: str | None = None
+    image_media_type: str | None = None
 
 
 class WsCancel(BaseModel):

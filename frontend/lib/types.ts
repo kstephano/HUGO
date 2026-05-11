@@ -26,6 +26,7 @@ export interface Message {
   cacheReadTokens: number;
   cacheWriteTokens: number;
   createdAt: string;
+  imagePreview?: string; // data URL, only on optimistic user messages
 }
 
 export interface ContentBlock {

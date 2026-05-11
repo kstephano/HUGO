@@ -113,8 +113,10 @@ async def websocket_endpoint(
 
                 content = frame.get("content", "").strip()
                 client_message_id = frame.get("client_message_id", "")
+                image_data = frame.get("image_data")
+                image_media_type = frame.get("image_media_type")
 
-                if not content:
+                if not content and not image_data:
                     await send(WsError(code="empty_message", message="Message content required").model_dump_json())
                     continue
 
@@ -141,6 +143,8 @@ async def websocket_endpoint(
                         embed_provider=providers["embed"],
                         registry=providers["registry"],
                         send=send,
+                        image_data=image_data,
+                        image_media_type=image_media_type,
                     )
                 except anthropic.APIStatusError as exc:
                     log.error("ws_loop_error", error=str(exc), conversation_id=conversation_id)
