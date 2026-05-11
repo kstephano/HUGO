@@ -38,34 +38,19 @@ Agent tools run concurrently (up to 5 in parallel) with a 30-second timeout each
 
 **Real-time web search**
 
-> *"What's the current federal funds rate and how does it compare to where it was a year ago?"*
-> *"Who won the most recent Champions League final and what was the scoreline?"*
-> *"What's the latest on [ongoing news story]?"*
-
-<!-- Screenshot: Hugo using the web_search tool badge, then answering with sourced, up-to-date information -->
-`[ Screenshot ]`
+<img width="607" height="327" alt="image" src="https://github.com/user-attachments/assets/1b9e3ec7-1f28-447f-a638-a430714c16bb" />
 
 &nbsp;
 
 **Extended thinking — working through a hard problem**
 
-> *"Walk me through how a transformer's attention mechanism actually works, from the raw input to the weighted output."*
-> *"I have £50k to invest and I'm 28. What allocation would you suggest and why?"*
-> *"What are the main reasons a distributed system might return stale reads, and how does each fix introduce a new tradeoff?"*
-
-<!-- Screenshot: Hugo's thinking steps visible in the UI, followed by a structured and precise final answer -->
-`[ Screenshot ]`
+<img width="603" height="898" alt="image" src="https://github.com/user-attachments/assets/a925bee7-92e2-494a-9624-b4913a9472f4" />
 
 &nbsp;
 
 **Nuanced reasoning on an ambiguous question**
 
-> *"Is it ever ethical to lie? Give me a genuinely balanced answer, not a hedge."*
-> *"My co-founder and I disagree on whether to raise a seed round now or grow slower. What questions should we be asking?"*
-> *"Explain the trolley problem and why it still matters in real AI design decisions."*
-
-<!-- Screenshot: Hugo unpacking a layered question, stating assumptions clearly before giving a considered answer -->
-`[ Screenshot ]`
+<img width="641" height="714" alt="image" src="https://github.com/user-attachments/assets/a475b0f8-c5df-4671-b267-71f503c2e085" />
 
 &nbsp;
 
