@@ -277,16 +277,28 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
         {/* Tool-use badges */}
         {active && active.toolUses.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-2">
-            {active.toolUses.map((t) => (
-              <span
-                key={t.toolUseId}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 text-[10px] font-medium border border-purple-500/20"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
-                {t.toolName}
-                {t.result && <span className="text-emerald-500 ml-0.5">✓</span>}
-              </span>
-            ))}
+            {active.toolUses
+              .reduce<{ toolName: string; count: number; allDone: boolean }[]>((acc, t) => {
+                const existing = acc.find((g) => g.toolName === t.toolName);
+                if (existing) {
+                  existing.count++;
+                  if (!t.result) existing.allDone = false;
+                } else {
+                  acc.push({ toolName: t.toolName, count: 1, allDone: !!t.result });
+                }
+                return acc;
+              }, [])
+              .map((g) => (
+                <span
+                  key={g.toolName}
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 text-[10px] font-medium border border-purple-500/20"
+                >
+                  {!g.allDone && <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />}
+                  {g.toolName}
+                  {g.count >= 2 && <span className="opacity-60 ml-0.5">{g.count}x</span>}
+                  {g.allDone && <span className="text-emerald-500 ml-0.5">✓</span>}
+                </span>
+              ))}
           </div>
         )}
 

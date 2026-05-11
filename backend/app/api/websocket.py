@@ -10,6 +10,7 @@ Protocol:
 """
 from __future__ import annotations
 import json
+import anthropic
 from fastapi import APIRouter, Cookie, Depends, Query, WebSocket, WebSocketDisconnect
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.cancel_bus import publish_cancel
@@ -141,9 +142,17 @@ async def websocket_endpoint(
                         registry=providers["registry"],
                         send=send,
                     )
+                except anthropic.APIStatusError as exc:
+                    log.error("ws_loop_error", error=str(exc), conversation_id=conversation_id)
+                    error_type = (exc.body or {}).get("error", {}).get("type", "")
+                    if error_type == "overloaded_error":
+                        msg = "Claude is currently overloaded. Please try again in a moment."
+                    else:
+                        msg = "The AI service returned an error. Please try again."
+                    await send(WsError(code="api_error", message=msg).model_dump_json())
                 except Exception as exc:
                     log.error("ws_loop_error", error=str(exc), conversation_id=conversation_id)
-                    await send(WsError(code="loop_error", message=str(exc)).model_dump_json())
+                    await send(WsError(code="loop_error", message="Something went wrong. Please try again.").model_dump_json())
 
             else:
                 await send(WsError(code="unknown_type", message=f"Unknown frame type: {ftype}").model_dump_json())
