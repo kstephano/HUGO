@@ -267,7 +267,7 @@ export function ChatInterface({ conversationId }: Props) {
             className="flex-1 resize-none rounded-xl border border-[rgb(var(--border))]
               bg-[rgb(var(--bg))] text-[rgb(var(--fg))]
               placeholder:text-[rgb(var(--muted))]
-              px-4 py-2.5 text-sm
+              px-4 py-2.5 text-base sm:text-sm
               focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:border-purple-500/40
               transition-all overflow-hidden disabled:opacity-40"
           />
