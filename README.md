@@ -1,5 +1,9 @@
+<img src="frontend/public/images/hugo-logo.png" width="72" alt="Hugo" align="left">
+
 # H . U . G . O
 ### Helpful Universal Guidance Operator
+
+<br clear="left">
 
 Have you ever wanted an astronaut robot AI assistant to be your friend and counselor for almost anything you can think to ask of him? Look no further. I present HUGO - a personal AI assistant. If you haven't been living under a rock the past few years, you know what that is.
 
