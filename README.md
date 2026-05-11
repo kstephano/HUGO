@@ -42,7 +42,7 @@ Agent tools run concurrently (up to 5 in parallel) with a 30-second timeout each
 
 ## In Action
 
-**Login Page** <font color="gray"><em>I promise I won't sell your data</em></font>
+**Login Page** <font color="gray"><em>Google is everywhere man</em></font>
 
 <img width="320" alt="5916C9FC-3900-407C-B7E8-07BE9CCFA8B6_1_102_o" src="https://github.com/user-attachments/assets/8283b8f9-8440-41ba-b0aa-707e646bbb68" />
 
