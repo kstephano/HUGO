@@ -123,8 +123,12 @@ export function ChatInterface({ conversationId }: Props) {
     const reader = new FileReader();
     reader.onload = () => {
       const dataUrl = reader.result as string;
-      const [header, data] = dataUrl.split(",");
+      if (!dataUrl) return;
+      const commaIdx = dataUrl.indexOf(",");
+      const header = dataUrl.substring(0, commaIdx);
+      const data = dataUrl.substring(commaIdx + 1);
       const mediaType = header.match(/:(.*?);/)?.[1] ?? "image/jpeg";
+      if (!data) return;
       setAttachedImage({ data, mediaType, preview: dataUrl });
     };
     reader.readAsDataURL(file);

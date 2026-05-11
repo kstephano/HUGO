@@ -116,6 +116,12 @@ async def websocket_endpoint(
                 image_data = frame.get("image_data")
                 image_media_type = frame.get("image_media_type")
 
+                log.info("ws_message_received",
+                         content_len=len(content),
+                         has_image=image_data is not None,
+                         image_data_len=len(image_data) if image_data else 0,
+                         image_media_type=image_media_type)
+
                 if not content and not image_data:
                     await send(WsError(code="empty_message", message="Message content required").model_dump_json())
                     continue
