@@ -36,21 +36,29 @@ Agent tools run concurrently (up to 5 in parallel) with a 30-second timeout each
 
 ## In Action
 
-**Real-time web search**
+**Login Page** _sorry_
+
+<img width="1179" height="2556" alt="5916C9FC-3900-407C-B7E8-07BE9CCFA8B6_1_102_o" src="https://github.com/user-attachments/assets/8283b8f9-8440-41ba-b0aa-707e646bbb68" />
+
+**Main Chat Page** _yes I watched Interstellar recently_
+
+<img width="1179" height="2556" alt="9BB9E234-6B08-4D95-ADD7-CB90F1B5EE47_1_102_o" src="https://github.com/user-attachments/assets/b3558c34-8594-4c93-9d46-fa505a39dae2" />
+
+**Sidebar with conversation history** _Hugo can remember from past conversations - good thing I didn't call him Nemo wahay_
+
+<img width="1179" height="2556" alt="227F0CC3-2644-4E7C-BCD1-9D1E3572F69F_1_102_o" src="https://github.com/user-attachments/assets/25bde055-559d-48ea-8844-8a410a6b72cf" />
+
+**Real-time web search** _useful_
 
 <img width="607" height="327" alt="image" src="https://github.com/user-attachments/assets/1b9e3ec7-1f28-447f-a638-a430714c16bb" />
 
 &nbsp;
 
-**Image and document analysis**
+**PDF scanning** _also pretty useful_
 
-> *[Attaches a photo of a wine label]* *"What can you tell me about this wine?"*
-> *[Attaches a screenshot of an error message]* *"What's causing this and how do I fix it?"*
-> *[Attaches a PDF contract]* *"Summarise the key obligations in this contract and flag anything unusual."*
-> *[Takes a photo of a receipt]* *"What did I spend and is anything worth querying?"*
+<img width="1179" height="2556" alt="FA865ED0-014F-4F47-8D48-2A9E62942409_1_102_o" src="https://github.com/user-attachments/assets/6e39bf19-551d-4dd4-afd9-9e3e25a46c23" />
 
-<!-- Screenshot: Hugo reading an attached image or PDF and giving a detailed, grounded response -->
-`[ Screenshot ]`
+**Image scanning** _the first picture contained my API secrets lol_
 
 ---
 
