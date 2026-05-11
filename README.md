@@ -15,13 +15,23 @@ Long conversations are handled via a rolling summary: once the context window ap
 
 ## Toolkit
 
+### Agent Tools
+
 | Tool | Description |
 |---|---|
 | **Web Search** | Brave Search API for real-time information — news, prices, events, anything beyond the model's training cutoff. Returns ranked results with titles, URLs, and descriptions. |
 | **Document Search** | Hybrid retrieval over a personal knowledge base using semantic vector search (pgvector HNSW) and keyword search (pg_trgm BM25), combined with configurable alpha-weighting. |
 | **Current Time** | UTC timestamp used when time-awareness is needed for a response. |
 
-Tools run concurrently (up to 5 in parallel) with a 30-second timeout each. Results are capped at 10KB per call to keep context efficient.
+Agent tools run concurrently (up to 5 in parallel) with a 30-second timeout each. Results are capped at 10KB per call to keep context efficient.
+
+### Input Capabilities
+
+| Input | Description |
+|---|---|
+| **Image attachment** | Attach a JPEG, PNG, GIF, or WebP image from your device. Hugo reads and reasons about the image content using Claude's vision API. |
+| **Camera capture** | Take a photo directly from your device camera and send it inline. Useful for scanning documents, receipts, whiteboards, or anything in front of you. |
+| **PDF upload** | Attach a PDF document for Hugo to read and reference. Claude receives the full document content and can answer questions, summarise sections, or extract specific information from it. |
 
 ---
 
@@ -67,6 +77,18 @@ Tools run concurrently (up to 5 in parallel) with a 30-second timeout each. Resu
 > *"Explain the trolley problem and why it still matters in real AI design decisions."*
 
 <!-- Screenshot: Hugo unpacking a layered question, stating assumptions clearly before giving a considered answer -->
+`[ Screenshot ]`
+
+&nbsp;
+
+**Image and document analysis**
+
+> *[Attaches a photo of a wine label]* *"What can you tell me about this wine?"*
+> *[Attaches a screenshot of an error message]* *"What's causing this and how do I fix it?"*
+> *[Attaches a PDF contract]* *"Summarise the key obligations in this contract and flag anything unusual."*
+> *[Takes a photo of a receipt]* *"What did I spend and is anything worth querying?"*
+
+<!-- Screenshot: Hugo reading an attached image or PDF and giving a detailed, grounded response -->
 `[ Screenshot ]`
 
 ---
