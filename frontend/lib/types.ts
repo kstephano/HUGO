@@ -26,7 +26,7 @@ export interface Message {
   cacheReadTokens: number;
   cacheWriteTokens: number;
   createdAt: string;
-  imagePreview?: string; // data URL, only on optimistic user messages
+  attachment?: { type: 'image' | 'pdf'; preview?: string; name?: string; }; // optimistic only
 }
 
 export interface ContentBlock {

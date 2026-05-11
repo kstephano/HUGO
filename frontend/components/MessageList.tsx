@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Markdown from "markdown-to-jsx";
 import { useStore } from "@/lib/store";
-import { User } from "lucide-react";
+import { FileText, User } from "lucide-react";
 import type { Message } from "@/lib/types";
 import clsx from "clsx";
 
@@ -177,9 +177,15 @@ function MessageBubble({ msg }: { msg: Message }) {
             : "bg-[rgb(var(--bubble-assistant))] text-[rgb(var(--fg))] border border-[rgb(var(--border))] rounded-bl-sm shadow-sm"
         )}
       >
-        {msg.imagePreview && (
+        {msg.attachment?.type === "image" && msg.attachment.preview && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={msg.imagePreview} alt="Attached" className="mb-2 max-h-48 w-auto rounded-lg object-cover" />
+          <img src={msg.attachment.preview} alt="Attached" className="mb-2 max-h-48 w-auto rounded-lg object-cover" />
+        )}
+        {msg.attachment?.type === "pdf" && msg.attachment.name && (
+          <div className="mb-2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/10 text-white/80 text-[11px] w-fit">
+            <FileText className="w-3.5 h-3.5 flex-shrink-0" />
+            <span className="max-w-[180px] truncate">{msg.attachment.name}</span>
+          </div>
         )}
         {text && (
           <div className="prose prose-sm prose-invert max-w-none break-words">

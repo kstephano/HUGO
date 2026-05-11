@@ -74,15 +74,17 @@ async def run_loop(
     messages = build_messages(conversation)
     await save_user_message(db, conversation_id, user_content, client_message_id)
     if image_data and image_media_type:
-        log.info("loop_image_turn", image_media_type=image_media_type, image_data_len=len(image_data))
-        user_blocks: list[dict] = [
-            {"type": "image", "source": {"type": "base64", "media_type": image_media_type, "data": image_data}},
-        ]
+        log.info("loop_file_turn", image_media_type=image_media_type, image_data_len=len(image_data))
+        if image_media_type == "application/pdf":
+            file_block: dict = {"type": "document", "source": {"type": "base64", "media_type": "application/pdf", "data": image_data}}
+        else:
+            file_block = {"type": "image", "source": {"type": "base64", "media_type": image_media_type, "data": image_data}}
+        user_blocks: list[dict] = [file_block]
         if user_content:
             user_blocks.append({"type": "text", "text": user_content})
         messages.append({"role": "user", "content": user_blocks})
     else:
-        log.info("loop_text_turn", has_image_data=bool(image_data), has_media_type=bool(image_media_type))
+        log.info("loop_text_turn", has_file_data=bool(image_data), has_media_type=bool(image_media_type))
         messages.append({"role": "user", "content": user_content})
 
     accumulated_text: list[str] = []
