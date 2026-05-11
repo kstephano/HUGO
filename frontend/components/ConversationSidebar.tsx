@@ -353,16 +353,8 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
                       )
                 )}
               >
-                <div className="relative flex-1 min-w-0 overflow-hidden">
-                  <span className="block whitespace-nowrap leading-snug">{conv.title ?? "New conversation"}</span>
-                  <div
-                    className={clsx(
-                      "absolute inset-y-0 right-0 w-8 pointer-events-none",
-                      activeId === conv.id
-                        ? "bg-gradient-to-l from-[rgba(30,12,55,0.95)] to-transparent"
-                        : "bg-gradient-to-l from-[rgba(2,4,14,0.65)] to-transparent group-hover:from-[rgba(10,10,20,0.8)]"
-                    )}
-                  />
+                <div className="flex-1 min-w-0">
+                  <span className="block truncate leading-snug">{conv.title ?? "New conversation"}</span>
                 </div>
                 <button
                   onClick={(e) => handleDelete(e, conv.id)}
