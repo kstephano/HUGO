@@ -1,13 +1,13 @@
 # H . U . G . O
 ### Helpful Universal Guidance Operator
 
-Hugo is a personal AI assistant built on Claude Sonnet. He is designed to give accurate, well-reasoned answers by actively using tools — searching the web, querying documents, and thinking through problems — rather than relying solely on what the model already knows.
+Hugo is a personal AI assistant built on Claude Sonnet. He is designed to give accurate, well-reasoned answers by actively using tools — searching the web, analysing attachments, and thinking through problems — rather than relying solely on what the model already knows.
 
 ---
 
 ## What Hugo Does
 
-Hugo handles complex, open-ended questions that require up-to-date information or multi-step reasoning. When a question is time-sensitive, he searches. When context is in your documents, he retrieves it. When a problem is hard, he thinks through it before responding.
+Hugo handles complex, open-ended questions that require up-to-date information or multi-step reasoning. When a question is time-sensitive, he searches. When you attach an image or PDF, he reads it. When a problem is hard, he thinks through it before responding.
 
 Long conversations are handled via a rolling summary: once the context window approaches its limit, Claude Haiku compresses the older history into a persistent summary so the thread is never lost.
 
@@ -20,10 +20,9 @@ Long conversations are handled via a rolling summary: once the context window ap
 | Tool | Description |
 |---|---|
 | **Web Search** | Brave Search API for real-time information — news, prices, events, anything beyond the model's training cutoff. Returns ranked results with titles, URLs, and descriptions. |
-| **Document Search** | Hybrid retrieval over a personal knowledge base using semantic vector search (pgvector HNSW) and keyword search (pg_trgm BM25), combined with configurable alpha-weighting. |
 | **Current Time** | UTC timestamp used when time-awareness is needed for a response. |
 
-Agent tools run concurrently (up to 5 in parallel) with a 30-second timeout each. Results are capped at 10KB per call to keep context efficient.
+Agent tools run concurrently (up to 5 in parallel) with a 30-second timeout each.
 
 ### Input Capabilities
 
@@ -55,17 +54,6 @@ Agent tools run concurrently (up to 5 in parallel) with a 30-second timeout each
 > *"What are the main reasons a distributed system might return stale reads, and how does each fix introduce a new tradeoff?"*
 
 <!-- Screenshot: Hugo's thinking steps visible in the UI, followed by a structured and precise final answer -->
-`[ Screenshot ]`
-
-&nbsp;
-
-**Precise retrieval from personal documents**
-
-> *"What does my lease say about subletting?"*
-> *"Summarise the risk factors section of the report I uploaded."*
-> *"What was the agreed delivery timeline in the contract?"*
-
-<!-- Screenshot: Hugo pulling a specific answer from an uploaded document, citing the relevant passage -->
 `[ Screenshot ]`
 
 &nbsp;
@@ -128,10 +116,10 @@ Hugo is a Next.js frontend backed by a FastAPI service communicating over a pers
 │  users        │  │               │  │  sessions     │
 │  conversations│  │  Claude Sonnet│  │  rate limits  │
 │  messages     │  │  Claude Haiku │  │  cancel bus   │
-│  documents    │  │  streaming    │  │  idempotency  │
-│  pgvector     │  │  prompt cache │  └───────────────┘
-│  pg_trgm      │  │  ext. thinking│
-│  HNSW · BM25  │  └───────────────┘
+│               │  │  streaming    │  │  idempotency  │
+│               │  │  prompt cache │  └───────────────┘
+│               │  │  ext. thinking│
+│               │  └───────────────┘
 └───────────────┘
 ```
 
@@ -158,9 +146,8 @@ A Redis PubSub channel (`cancel:{conversation_id}`) carries cancellation signals
 | Frontend | Next.js 14 (App Router), TypeScript, Tailwind CSS, Zustand |
 | Backend | Python 3.11, FastAPI, SQLAlchemy (async), Alembic |
 | AI | Anthropic Claude Sonnet — streaming, prompt caching, extended thinking |
-| Embeddings | Voyage AI (`voyage-3`, 1024-dim) |
 | Web Search | Brave Search API |
-| Database | PostgreSQL + pgvector (HNSW) + pg_trgm |
+| Database | PostgreSQL |
 | Cache / Pub-Sub | Redis — sessions, rate limiting, cancellation bus, idempotency |
 | Auth | Google OAuth (One Tap) · Email/password (bcrypt) |
 
@@ -178,7 +165,6 @@ ANTHROPIC_THINKING_BUDGET=0        # set > 0 to enable extended thinking
 
 # Tools
 BRAVE_SEARCH_API_KEY=
-VOYAGE_API_KEY=
 
 # Infrastructure
 DATABASE_URL=postgresql+asyncpg://hugo:hugo@localhost:5432/hugo
@@ -186,7 +172,7 @@ REDIS_URL=redis://localhost:6379/0
 
 # Auth
 GOOGLE_CLIENT_ID=
-SESSION_SECRET=change-me-in-production
+SESSION_SECRET=                    # openssl rand -hex 32
 
 # Agent behaviour
 MAX_TOOL_ITERATIONS=5
@@ -198,6 +184,4 @@ Frontend (`frontend/.env.local`):
 
 ```env
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=
-NEXT_PUBLIC_API_URL=http://localhost:8000
-NEXT_PUBLIC_WS_URL=ws://localhost:8000
 ```
