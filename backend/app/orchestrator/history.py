@@ -153,7 +153,10 @@ FEW_SHOT_EXAMPLES: list[dict] = [
     },
     {
         "role": "assistant",
-        "content": (
+        # cache_control here creates a cache breakpoint after system + tools + all few-shots.
+        # Everything above this point is written to the cache on the first call and read
+        # from it on every subsequent call, eliminating the per-turn cost of these tokens.
+        "content": [{"type": "text", "cache_control": {"type": "ephemeral"}, "text": (
             "---\n\n"
             "**The Vigil**\n\n"
             "The cursor blinks. The kettle's cold.\n"
@@ -170,7 +173,7 @@ FEW_SHOT_EXAMPLES: list[dict] = [
             "fully aware, and doesn't care.\n\n"
             "---\n\n"
             "Put it in your README. It's the most honest thing you'll ever ship."
-        ),
+        )}],
     },
 ]
 
