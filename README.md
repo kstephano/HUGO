@@ -42,18 +42,6 @@ Agent tools run concurrently (up to 5 in parallel) with a 30-second timeout each
 
 &nbsp;
 
-**Extended thinking — working through a hard problem**
-
-<img width="603" height="898" alt="image" src="https://github.com/user-attachments/assets/a925bee7-92e2-494a-9624-b4913a9472f4" />
-
-&nbsp;
-
-**Nuanced reasoning on an ambiguous question**
-
-<img width="641" height="714" alt="image" src="https://github.com/user-attachments/assets/a475b0f8-c5df-4671-b267-71f503c2e085" />
-
-&nbsp;
-
 **Image and document analysis**
 
 > *[Attaches a photo of a wine label]* *"What can you tell me about this wine?"*
