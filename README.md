@@ -1,15 +1,17 @@
 # H . U . G . O
 ### Helpful Universal Guidance Operator
 
-Hugo is a personal AI assistant built on Claude Sonnet. He is designed to give accurate, well-reasoned answers by actively using tools — searching the web, analysing attachments, and thinking through problems — rather than relying solely on what the model already knows.
+Have you ever wanted an astronaut robot AI assistant to be your friend and counselor for almost anything you can think to ask of him? Look no further. I present HUGO - a personal AI assistant. If you haven't been living under a rock the past few years, you know what that is.
 
 ---
 
 ## What Hugo Does
 
-Hugo handles complex, open-ended questions that require up-to-date information or multi-step reasoning. When a question is time-sensitive, he searches. When you attach an image or PDF, he reads it. When a problem is hard, he thinks through it before responding.
+Hugo has a watch that allows him to tell the time. He also has the latest iPhone 17 Pro with EE Super 5G connectivity, so he's connected wherever you and him go, even in space! This allows him to answer time-sensitive questions, in which the underlying model (Claude Sonnet), hasn't been trained on. 
 
-Long conversations are handled via a rolling summary: once the context window approaches its limit, Claude Haiku compresses the older history into a persistent summary so the thread is never lost.
+He can also load up your images or PDF files to read through and digest. When a problem is hard, he enters MUSE (Moment of Unhurried, Sustained Examination) to really get to grips with the issue.
+
+Long conversations can tire his ADHD attention mechanism, so he enables RECAP (Reduce Extended Conversation Around Points) via Claude Haiku.
 
 ---
 
@@ -48,7 +50,7 @@ Agent tools run concurrently (up to 5 in parallel) with a 30-second timeout each
 
 &nbsp;
 
-**Sidebar with conversation history** <font color="gray"><em>Hugo can remember from past conversations - good thing I didn't call him Nemo (Nifty Everyday Multitask Oracle sounds not too shabby though to be fair)</em></font>
+**Sidebar with conversation history** <font color="gray"><em>Hugo can remember from past conversations - Nemo (Nifty Everyday Multitask Oracle) mode can be toggled on though if you'd prefer</em></font>
 
 <img width="320" alt="227F0CC3-2644-4E7C-BCD1-9D1E3572F69F_1_102_o" src="https://github.com/user-attachments/assets/25bde055-559d-48ea-8844-8a410a6b72cf" />
 
