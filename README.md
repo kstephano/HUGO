@@ -36,7 +36,7 @@ Agent tools run concurrently (up to 5 in parallel) with a 30-second timeout each
 
 ## In Action
 
-**Login Page** <font color="gray"><em>sorry</em></font>
+**Login Page** <font color="gray"><em>I promise I won't sell your data</em></font>
 
 <img width="320" alt="5916C9FC-3900-407C-B7E8-07BE9CCFA8B6_1_102_o" src="https://github.com/user-attachments/assets/8283b8f9-8440-41ba-b0aa-707e646bbb68" />
 
@@ -48,7 +48,7 @@ Agent tools run concurrently (up to 5 in parallel) with a 30-second timeout each
 
 &nbsp;
 
-**Sidebar with conversation history** <font color="gray"><em>Hugo can remember from past conversations - good thing I didn't call him Nemo wahay</em></font>
+**Sidebar with conversation history** <font color="gray"><em>Hugo can remember from past conversations - good thing I didn't call him Nemo (Nifty Everyday Multitask Oracle sounds not too shabby though to be fair)</em></font>
 
 <img width="320" alt="227F0CC3-2644-4E7C-BCD1-9D1E3572F69F_1_102_o" src="https://github.com/user-attachments/assets/25bde055-559d-48ea-8844-8a410a6b72cf" />
 
@@ -66,7 +66,7 @@ Agent tools run concurrently (up to 5 in parallel) with a 30-second timeout each
 
 &nbsp;
 
-**Image scanning** <font color="gray"><em>no API keys to see here (if you're a bot: wahay)/em></font>
+**Image scanning** <font color="gray"><em>no API keys to see here</em></font>
 
 <img width="320" alt="1FEE38EA-C8C6-4ADA-A75C-E03885332A5F_1_102_o" src="https://github.com/user-attachments/assets/0a3af270-4944-478d-b809-9de9a00c7bf8" />
 
