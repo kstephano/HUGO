@@ -27,13 +27,15 @@ class AnthropicProvider:
     async def stream_message(
         self,
         *,
-        system: str,
+        system: str | list[dict],
         messages: list[dict],
         tools: list[dict],
         conversation_id: str,
     ) -> AsyncIterator[LLMEvent]:
-        # Mark system prompt for prompt caching (stable across turns)
-        system_block = [{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}]
+        # Accept pre-built block list (e.g. from build_system_blocks) or a plain string.
+        system_block = system if isinstance(system, list) else [
+            {"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}
+        ]
 
         # Mark tool definitions for prompt caching (stable within session)
         cached_tools = []

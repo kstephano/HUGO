@@ -27,7 +27,7 @@ from app.llm.provider import (
     LLMProvider, LLMEvent,
     TextDeltaEvent, ThinkingDeltaEvent, ToolUseEvent, UsageEvent, StopEvent,
 )
-from app.orchestrator.history import SYSTEM_PROMPT, build_messages, estimate_tokens
+from app.orchestrator.history import build_system_blocks, build_messages, estimate_tokens
 from app.orchestrator.persistence import (
     load_conversation, save_assistant_message, save_user_message,
     set_conversation_title, update_conversation_summary,
@@ -126,7 +126,7 @@ async def run_loop(
 
             try:
                 async for event in llm.stream_message(
-                    system=SYSTEM_PROMPT,
+                    system=build_system_blocks(),
                     messages=messages,
                     tools=registry.schemas(),
                     conversation_id=conversation_id,

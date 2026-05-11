@@ -45,7 +45,7 @@ class LLMProvider(Protocol):
     async def stream_message(
         self,
         *,
-        system: str,
+        system: str | list[dict],
         messages: list[dict],
         tools: list[dict],
         conversation_id: str,

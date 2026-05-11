@@ -1,5 +1,6 @@
 """Builds the messages list for the LLM from DB rows, respecting rolling summary."""
 from __future__ import annotations
+from datetime import datetime, timezone
 from app.db.models import Conversation, Message
 
 
@@ -176,6 +177,21 @@ FEW_SHOT_EXAMPLES: list[dict] = [
         )}],
     },
 ]
+
+
+def build_system_blocks() -> list[dict]:
+    """Returns the system prompt as two blocks:
+    - Block 1: static system text, marked for prompt caching (stable across all turns).
+    - Block 2: current date/time, sent fresh each call so the model always knows the date.
+    Splitting them keeps the cache hit on the expensive block while grounding temporal reasoning.
+    """
+    now = datetime.now(timezone.utc)
+    date_str = now.strftime("%A, %d %B %Y")
+    time_str = now.strftime("%H:%M UTC")
+    return [
+        {"type": "text", "text": SYSTEM_PROMPT, "cache_control": {"type": "ephemeral"}},
+        {"type": "text", "text": f"Today is {date_str}. The current time is {time_str}."},
+    ]
 
 
 def build_messages(conversation: Conversation) -> list[dict]:
