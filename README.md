@@ -36,48 +36,41 @@ Agent tools run concurrently (up to 5 in parallel) with a 30-second timeout each
 
 ## In Action
 
-**Real-time web search**
+**Login Page** <font color="gray"><em>I promise I won't sell your data</em></font>
 
-> *"What's the current federal funds rate and how does it compare to where it was a year ago?"*
-> *"Who won the most recent Champions League final and what was the scoreline?"*
-> *"What's the latest on [ongoing news story]?"*
-
-<!-- Screenshot: Hugo using the web_search tool badge, then answering with sourced, up-to-date information -->
-`[ Screenshot ]`
+<img width="320" alt="5916C9FC-3900-407C-B7E8-07BE9CCFA8B6_1_102_o" src="https://github.com/user-attachments/assets/8283b8f9-8440-41ba-b0aa-707e646bbb68" />
 
 &nbsp;
 
-**Extended thinking — working through a hard problem**
+**Main Chat Page** <font color="gray"><em>yes I watched Interstellar recently</em></font>
 
-> *"Walk me through how a transformer's attention mechanism actually works, from the raw input to the weighted output."*
-> *"I have £50k to invest and I'm 28. What allocation would you suggest and why?"*
-> *"What are the main reasons a distributed system might return stale reads, and how does each fix introduce a new tradeoff?"*
-
-<!-- Screenshot: Hugo's thinking steps visible in the UI, followed by a structured and precise final answer -->
-`[ Screenshot ]`
+<img width="320" alt="9BB9E234-6B08-4D95-ADD7-CB90F1B5EE47_1_102_o" src="https://github.com/user-attachments/assets/b3558c34-8594-4c93-9d46-fa505a39dae2" />
 
 &nbsp;
 
-**Nuanced reasoning on an ambiguous question**
+**Sidebar with conversation history** <font color="gray"><em>Hugo can remember from past conversations - good thing I didn't call him Nemo (Nifty Everyday Multitask Oracle sounds not too shabby though to be fair)</em></font>
 
-> *"Is it ever ethical to lie? Give me a genuinely balanced answer, not a hedge."*
-> *"My co-founder and I disagree on whether to raise a seed round now or grow slower. What questions should we be asking?"*
-> *"Explain the trolley problem and why it still matters in real AI design decisions."*
-
-<!-- Screenshot: Hugo unpacking a layered question, stating assumptions clearly before giving a considered answer -->
-`[ Screenshot ]`
+<img width="320" alt="227F0CC3-2644-4E7C-BCD1-9D1E3572F69F_1_102_o" src="https://github.com/user-attachments/assets/25bde055-559d-48ea-8844-8a410a6b72cf" />
 
 &nbsp;
 
-**Image and document analysis**
+**Real-time web search** <font color="gray"><em>useful</em></font>
 
-> *[Attaches a photo of a wine label]* *"What can you tell me about this wine?"*
-> *[Attaches a screenshot of an error message]* *"What's causing this and how do I fix it?"*
-> *[Attaches a PDF contract]* *"Summarise the key obligations in this contract and flag anything unusual."*
-> *[Takes a photo of a receipt]* *"What did I spend and is anything worth querying?"*
+<img width="320" alt="CB1869BC-EB98-4D52-A4A5-920943308173_1_102_o" src="https://github.com/user-attachments/assets/e815cea4-d9b5-41fa-9def-489f5653753c" />
 
-<!-- Screenshot: Hugo reading an attached image or PDF and giving a detailed, grounded response -->
-`[ Screenshot ]`
+&nbsp;
+
+**PDF scanning** <font color="gray"><em>also pretty useful</em></font>
+
+<img width="320" alt="FA865ED0-014F-4F47-8D48-2A9E62942409_1_102_o" src="https://github.com/user-attachments/assets/6e39bf19-551d-4dd4-afd9-9e3e25a46c23" />
+
+&nbsp;
+
+**Image scanning** <font color="gray"><em>no API keys to see here</em></font>
+
+<img width="320" alt="1FEE38EA-C8C6-4ADA-A75C-E03885332A5F_1_102_o" src="https://github.com/user-attachments/assets/0a3af270-4944-478d-b809-9de9a00c7bf8" />
+
+&nbsp;
 
 ---
 
