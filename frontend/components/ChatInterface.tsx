@@ -194,7 +194,7 @@ export function ChatInterface({ conversationId }: Props) {
       {/* Input bar — hidden until user acts on empty conversation */}
       {showInputBar && <div className="flex-shrink-0 border-t border-[rgb(var(--border))] bg-[rgba(5,9,22,0.82)] backdrop-blur-sm px-3 py-2 sm:px-4 sm:py-3">
         {/* Hidden file inputs */}
-        <input ref={imageInputRef} type="file" accept="image/jpeg,image/png,image/gif,image/webp" className="hidden"
+        <input ref={imageInputRef} type="file" accept="image/*" className="hidden"
           onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileSelect(f); e.target.value = ""; }} />
         <input ref={pdfInputRef} type="file" accept="application/pdf" className="hidden"
           onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileSelect(f); e.target.value = ""; }} />
