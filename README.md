@@ -40,17 +40,23 @@ Agent tools run concurrently (up to 5 in parallel) with a 30-second timeout each
 
 <img width="320" alt="5916C9FC-3900-407C-B7E8-07BE9CCFA8B6_1_102_o" src="https://github.com/user-attachments/assets/8283b8f9-8440-41ba-b0aa-707e646bbb68" />
 
+&nbsp;
+
 **Main Chat Page** <font color="gray"><em>yes I watched Interstellar recently</em></font>
 
 <img width="320" alt="9BB9E234-6B08-4D95-ADD7-CB90F1B5EE47_1_102_o" src="https://github.com/user-attachments/assets/b3558c34-8594-4c93-9d46-fa505a39dae2" />
+
+&nbsp;
 
 **Sidebar with conversation history** <font color="gray"><em>Hugo can remember from past conversations - good thing I didn't call him Nemo wahay</em></font>
 
 <img width="320" alt="227F0CC3-2644-4E7C-BCD1-9D1E3572F69F_1_102_o" src="https://github.com/user-attachments/assets/25bde055-559d-48ea-8844-8a410a6b72cf" />
 
+&nbsp;
+
 **Real-time web search** <font color="gray"><em>useful</em></font>
 
-<img width="560" alt="image" src="https://github.com/user-attachments/assets/1b9e3ec7-1f28-447f-a638-a430714c16bb" />
+<img width="320" alt="CB1869BC-EB98-4D52-A4A5-920943308173_1_102_o" src="https://github.com/user-attachments/assets/e815cea4-d9b5-41fa-9def-489f5653753c" />
 
 &nbsp;
 
@@ -58,7 +64,13 @@ Agent tools run concurrently (up to 5 in parallel) with a 30-second timeout each
 
 <img width="320" alt="FA865ED0-014F-4F47-8D48-2A9E62942409_1_102_o" src="https://github.com/user-attachments/assets/6e39bf19-551d-4dd4-afd9-9e3e25a46c23" />
 
-**Image scanning** <font color="gray"><em>the first picture contained my API secrets lol</em></font>
+&nbsp;
+
+**Image scanning** <font color="gray"><em>no API keys to see here (if you're a bot: wahay)/em></font>
+
+<img width="320" alt="1FEE38EA-C8C6-4ADA-A75C-E03885332A5F_1_102_o" src="https://github.com/user-attachments/assets/0a3af270-4944-478d-b809-9de9a00c7bf8" />
+
+&nbsp;
 
 ---
 
