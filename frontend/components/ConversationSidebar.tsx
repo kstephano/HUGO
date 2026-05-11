@@ -113,7 +113,7 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
   };
 
   const handleNew = async () => {
-    const emptyConv = conversations.find((c) => !c.title);
+    const emptyConv = conversations.find((c) => !c.title && c.id !== fadingId);
     if (emptyConv) {
       setActive(emptyConv.id);
       onMobileClose?.();

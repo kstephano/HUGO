@@ -103,13 +103,17 @@ export default function HomePage() {
   }, [setUser, loadConversations]);
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
       try {
         const user = await api.auth.me();
+        if (cancelled) return;
         setUser(user);
         await loadConversations(user.rememberConversations);
+        if (cancelled) return;
         setBoot("ready");
       } catch (e) {
+        if (cancelled) return;
         const msg = e instanceof Error ? e.message : "";
         if (msg.startsWith("401")) {
           setBoot("unauthenticated");
@@ -118,6 +122,7 @@ export default function HomePage() {
         }
       }
     })();
+    return () => { cancelled = true; };
   }, []);
 
   const onSwipeStart = (e: React.TouchEvent) => {
