@@ -86,17 +86,24 @@
 }
 
 /* ── Thinking indicator ─────────────────────────────────────────── */
+/*
+  rotateY gives an axial coin-spin rather than circular rotation.
+  Keyframes create 2 speed pulses per revolution:
+  0→20%: fast (150°), 20→50%: slow (30°), 50→70%: fast (150°), 70→100%: slow (30°)
+*/
 @keyframes thinking-cycle {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  0%   { transform: perspective(60px) rotateY(0deg); }
+  20%  { transform: perspective(60px) rotateY(150deg); }
+  50%  { transform: perspective(60px) rotateY(180deg); }
+  70%  { transform: perspective(60px) rotateY(330deg); }
+  100% { transform: perspective(60px) rotateY(360deg); }
 }
 .animate-thinking-cycle {
-  animation: thinking-cycle 1.8s linear infinite;
+  animation: thinking-cycle 2.4s linear infinite;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transform-box: fill-box;
-  transform-origin: 50% 50%;
+  transform-origin: center;
 }
 
 /* ── Thought list ───────────────────────────────────────────────── */
