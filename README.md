@@ -5,13 +5,13 @@
 
 <br clear="left">
 
-Have you ever wanted an astronaut robot AI assistant to be your friend and counselor for almost anything you can think to ask of him? Look no further. I present HUGO - a personal AI assistant. If you haven't been living under a rock the past few years, you know what that is.
+Have you ever wanted an astronaut robot AI assistant to be your friend and counselor for almost anything you can think to ask of him? Look no further. I present HUGO - a personal AI assistant. If you haven't been living under a rock the past few years, you may know what that is.
 
 ---
 
 ## What Hugo Does
 
-Hugo has a watch that allows him to tell the time. He also has the latest iPhone 17 Pro with EE Super 5G connectivity, so he's connected wherever you and him go, even in space! This allows him to answer time-sensitive questions, in which the underlying model (Claude Sonnet), hasn't been trained on. 
+Hugo has a watch that allows him to tell the time. He also has the latest iPhone 17 Pro with EE Super 5G connectivity, so he's connected to the internet wherever you and him go, even in space! This allows him to answer time-sensitive questions, in which the underlying model (Claude Sonnet), hasn't been trained on. 
 
 He can also load up your images or PDF files to read through and digest. When a problem is hard, he enters MUSE (Moment of Unhurried, Sustained Examination) to really get to grips with the issue.
 
