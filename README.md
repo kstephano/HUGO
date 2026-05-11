@@ -44,13 +44,13 @@ Agent tools run concurrently (up to 5 in parallel) with a 30-second timeout each
 
 &nbsp;
 
-**Main Chat Page** <font color="gray"><em>yes I watched Interstellar recently</em></font>
+**Main Chat Page** <font color="gray"><em>Yes I watched Interstellar recently</em></font>
 
 <img width="320" alt="9BB9E234-6B08-4D95-ADD7-CB90F1B5EE47_1_102_o" src="https://github.com/user-attachments/assets/b3558c34-8594-4c93-9d46-fa505a39dae2" />
 
 &nbsp;
 
-**Sidebar with conversation history** <font color="gray"><em>Hugo can remember from past conversations - Nemo (Nifty Everyday Multitask Oracle) mode can be toggled on though if you'd prefer</em></font>
+**Sidebar with conversation history** <font color="gray"><em>Hugo can remember from past conversations - DORY (Data-Omitting Response Yield) mode can be toggled on though if you'd prefer</em></font>
 
 <img width="320" alt="227F0CC3-2644-4E7C-BCD1-9D1E3572F69F_1_102_o" src="https://github.com/user-attachments/assets/25bde055-559d-48ea-8844-8a410a6b72cf" />
 
