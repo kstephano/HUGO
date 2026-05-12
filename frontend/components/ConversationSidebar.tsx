@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useStore } from "@/lib/store";
 import { api } from "@/lib/api";
 import {
-  Plus, Trash2, ChevronLeft, ChevronRight,
+  Plus, Trash2, ChevronLeft, PanelLeft,
   Settings, LogOut, Trash, ToggleLeft, ToggleRight,
 } from "lucide-react";
 import clsx from "clsx";
@@ -259,44 +259,50 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
       >
         {/* Header: logo + collapse toggle */}
         <div className="flex items-center border-b border-[rgb(var(--sidebar-border))] flex-shrink-0">
-          <div
-            className={clsx(
-              "flex items-center gap-3 py-4 transition-all duration-300 min-w-0",
-              collapsed ? "px-[9px]" : "px-4 flex-1"
-            )}
-          >
-            <Image
-              src="/images/hugo-logo.png"
-              alt="Hugo"
-              width={40}
-              height={40}
-              onClick={handleLogoClick}
-              className={clsx(
-                "flex-shrink-0 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.2)] cursor-pointer select-none transition-all duration-300",
-                collapsed ? "w-8 h-8" : "w-10 h-10",
-                logoWobbling && "animate-logo-wobble"
-              )}
-            />
-            {!collapsed && (
-              <p className="text-[rgb(var(--sidebar-fg))] font-semibold tracking-[0.15em] text-sm leading-none whitespace-nowrap">
-                HUGO
-              </p>
-            )}
-          </div>
-
-          <button
-            onClick={() => setCollapsed((c) => !c)}
-            className={clsx(
-              "hidden md:flex flex-shrink-0 items-center justify-center text-[rgb(var(--muted))] hover:text-[rgb(var(--sidebar-fg))] transition-colors",
-              collapsed ? "w-14 h-[65px]" : "w-8 h-[65px] mr-1"
-            )}
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {collapsed
-              ? <ChevronRight className="w-4 h-4" />
-              : <ChevronLeft className="w-4 h-4" />
-            }
-          </button>
+          {collapsed ? (
+            /* Collapsed: entire header is the expand button */
+            <button
+              onClick={() => setCollapsed(false)}
+              className="hidden md:flex w-full h-[65px] items-center justify-center cursor-col-resize group relative"
+              aria-label="Expand sidebar"
+            >
+              <Image
+                src="/images/hugo-logo.png"
+                alt="Hugo"
+                width={40}
+                height={40}
+                className="absolute rounded-full shadow-[0_0_10px_rgba(245,158,11,0.2)] select-none transition-all duration-300 group-hover:opacity-0 group-hover:scale-75"
+              />
+              <PanelLeft className="absolute w-6 h-6 text-[rgb(var(--muted))] opacity-0 scale-75 transition-all duration-300 group-hover:opacity-100 group-hover:scale-100" />
+            </button>
+          ) : (
+            /* Expanded: logo + name + collapse button */
+            <>
+              <div className="flex items-center gap-3 py-4 px-4 flex-1 min-w-0">
+                <Image
+                  src="/images/hugo-logo.png"
+                  alt="Hugo"
+                  width={40}
+                  height={40}
+                  onClick={handleLogoClick}
+                  className={clsx(
+                    "flex-shrink-0 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.2)] cursor-pointer select-none",
+                    logoWobbling && "animate-logo-wobble"
+                  )}
+                />
+                <p className="text-[rgb(var(--sidebar-fg))] font-semibold tracking-[0.15em] text-sm leading-none whitespace-nowrap">
+                  HUGO
+                </p>
+              </div>
+              <button
+                onClick={() => setCollapsed(true)}
+                className="hidden md:flex flex-shrink-0 items-center justify-center w-8 h-[65px] mr-1 cursor-col-resize text-[rgb(var(--muted))] hover:text-[rgb(var(--sidebar-fg))] transition-colors"
+                aria-label="Collapse sidebar"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+            </>
+          )}
         </div>
 
         {/* New conversation */}
