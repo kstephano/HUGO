@@ -11,7 +11,7 @@ Have you ever wanted an astronaut robot AI assistant to be your friend and couns
 
 ## What Hugo Does
 
-Hugo has a cool watch that allows him to tell the time. He also has the latest iPhone 17 Pro with EE Super 5G connectivity, so he's connected to the internet wherever you and him go, even in space! This allows him to answer time-sensitive questions, in which the underlying model (Claude Sonnet), hasn't been trained on. 
+Hugo has a cool Rolex that allows him to tell the time. He also has the latest iPhone 17 Pro with EE Super 5G connectivity, so he's connected to the internet wherever you and him go, even in space! This allows him to answer time-sensitive questions, in which the underlying model (Claude Sonnet), hasn't been trained on. 
 
 He can also load up your images or PDF files to read through and digest. When a problem is hard, he enters MUSE (Moment of Unhurried, Sustained Examination) to really get to grips with the issue.
 
