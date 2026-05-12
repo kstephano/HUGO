@@ -46,6 +46,69 @@ const SUGGESTED_PROMPTS = [
   "What films are in cinemas right now?",
 ];
 
+// ── Snake animation ────────────────────────────────────────────────────────────
+const GRID = 7;
+const CELL = 3;
+const CANVAS_SIZE = GRID * CELL; // 21px
+
+function SnakeAnimation() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let snake = [{ x: 3, y: 3 }, { x: 2, y: 3 }, { x: 1, y: 3 }];
+    let dir = { x: 1, y: 0 };
+    let stepsUntilTurn = 3;
+
+    const draw = () => {
+      ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+      snake.forEach((seg, i) => {
+        const alpha = 1 - i * (0.7 / snake.length);
+        ctx.fillStyle = `rgba(255, 232, 31, ${alpha})`;
+        ctx.fillRect(seg.x * CELL, seg.y * CELL, CELL - 1, CELL - 1);
+      });
+    };
+
+    const step = () => {
+      stepsUntilTurn--;
+      if (stepsUntilTurn <= 0) {
+        const choices = [{ x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 }]
+          .filter((d) => !(d.x === -dir.x && d.y === -dir.y));
+        dir = choices[Math.floor(Math.random() * choices.length)];
+        stepsUntilTurn = Math.floor(Math.random() * 3) + 2;
+      }
+      const head = snake[0];
+      snake = [
+        { x: (head.x + dir.x + GRID) % GRID, y: (head.y + dir.y + GRID) % GRID },
+        ...snake.slice(0, -1),
+      ];
+      draw();
+    };
+
+    draw();
+    const id = setInterval(step, 160);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <span
+      className="flex-shrink-0 inline-flex border border-[#FFE81F]/40 rounded-[2px]"
+      style={{ width: CANVAS_SIZE + 2, height: CANVAS_SIZE + 2, padding: 1 }}
+    >
+      <canvas
+        ref={canvasRef}
+        width={CANVAS_SIZE}
+        height={CANVAS_SIZE}
+        style={{ imageRendering: "pixelated", display: "block" }}
+      />
+    </span>
+  );
+}
+
 interface Props {
   conversationId: string;
   isPending?: boolean;
@@ -273,12 +336,7 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
         {/* Thinking — cycling verb + elapsed time + estimated tokens */}
         {isActive && (
           <p className="mb-2.5 flex items-center gap-1.5 text-[11px] italic" style={{ color: "#FFE81F" }}>
-            <span
-              className="animate-thinking-cycle flex-shrink-0"
-              style={{ color: "#FFE81F", fontSize: "13px", width: "14px", height: "14px" }}
-            >
-              *
-            </span>
+            <SnakeAnimation />
             {spinVerb}…
             <span className="not-italic opacity-50 text-[9px] tracking-wide">
               ({elapsedSeconds}s{estimatedTokens > 0 ? `, ~${estimatedTokens} tokens` : ""})
