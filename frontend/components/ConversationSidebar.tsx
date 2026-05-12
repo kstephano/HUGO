@@ -250,59 +250,65 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
         className={clsx(
           "flex flex-col h-full bg-[rgba(2,4,14,0.65)] backdrop-blur-md border-r border-[rgb(var(--sidebar-border))]",
           "fixed inset-y-0 left-0 z-40 w-72",
-          "transition-transform duration-300 ease-in-out",
+          "transition-[width,transform] duration-300 ease-in-out",
           mobileOpen ? "translate-x-0" : "-translate-x-full",
           collapsed ? "md:w-14" : "md:w-60",
           "md:relative md:inset-auto md:z-auto md:translate-x-0 md:flex-shrink-0",
           "overflow-hidden",
         )}
       >
-        {/* Header: logo + collapse toggle */}
-        <div className="flex items-center border-b border-[rgb(var(--sidebar-border))] flex-shrink-0">
-          {collapsed ? (
-            /* Collapsed: entire header is the expand button */
-            <button
-              onClick={() => setCollapsed(false)}
-              className="hidden md:flex w-full h-[65px] items-center justify-center cursor-col-resize group relative"
-              aria-label="Expand sidebar"
+        {/* Header: logo + collapse toggle — unified structure, no conditional swap */}
+        <div className="flex items-center border-b border-[rgb(var(--sidebar-border))] flex-shrink-0 h-[65px]">
+          {/* Logo area */}
+          <div className={clsx(
+            "flex items-center transition-all duration-300 flex-1 min-w-0",
+            collapsed ? "justify-center" : "pl-4 gap-3"
+          )}>
+            {/* Logo wrapper — fixed 40×40, hover shows PanelLeft when collapsed */}
+            <div
+              className={clsx(
+                "relative flex-shrink-0 w-10 h-10",
+                collapsed ? "group cursor-col-resize" : "cursor-pointer"
+              )}
+              onClick={collapsed ? () => setCollapsed(false) : handleLogoClick}
             >
               <Image
                 src="/images/hugo-logo.png"
                 alt="Hugo"
                 width={40}
                 height={40}
-                className="absolute rounded-full shadow-[0_0_10px_rgba(245,158,11,0.2)] select-none transition-all duration-300 group-hover:opacity-0 group-hover:scale-75"
+                className={clsx(
+                  "w-10 h-10 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.2)] select-none transition-all duration-300",
+                  collapsed && "group-hover:opacity-0 group-hover:scale-75",
+                  logoWobbling && "animate-logo-wobble"
+                )}
               />
-              <PanelLeft className="absolute w-6 h-6 text-[rgb(var(--muted))] opacity-0 scale-75 transition-all duration-300 group-hover:opacity-100 group-hover:scale-100" />
-            </button>
-          ) : (
-            /* Expanded: logo + name + collapse button */
-            <>
-              <div className="flex items-center gap-3 py-4 px-4 flex-1 min-w-0">
-                <Image
-                  src="/images/hugo-logo.png"
-                  alt="Hugo"
-                  width={40}
-                  height={40}
-                  onClick={handleLogoClick}
-                  className={clsx(
-                    "flex-shrink-0 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.2)] cursor-pointer select-none",
-                    logoWobbling && "animate-logo-wobble"
-                  )}
-                />
-                <p className="text-[rgb(var(--sidebar-fg))] font-semibold tracking-[0.15em] text-sm leading-none whitespace-nowrap">
-                  HUGO
-                </p>
-              </div>
-              <button
-                onClick={() => setCollapsed(true)}
-                className="hidden md:flex flex-shrink-0 items-center justify-center w-8 h-[65px] mr-1 cursor-col-resize text-[rgb(var(--muted))] hover:text-[rgb(var(--sidebar-fg))] transition-colors"
-                aria-label="Collapse sidebar"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-            </>
-          )}
+              {collapsed && (
+                <PanelLeft className="absolute inset-0 m-auto w-6 h-6 text-[rgb(var(--muted))] opacity-0 scale-75 transition-all duration-300 group-hover:opacity-100 group-hover:scale-100" />
+              )}
+            </div>
+
+            {/* HUGO text — fades and collapses with sidebar */}
+            <p className={clsx(
+              "text-[rgb(var(--sidebar-fg))] font-semibold tracking-[0.15em] text-sm leading-none whitespace-nowrap transition-all duration-300 overflow-hidden",
+              collapsed ? "opacity-0 max-w-0" : "opacity-100 max-w-[120px]"
+            )}>
+              HUGO
+            </p>
+          </div>
+
+          {/* Collapse button — shrinks away when collapsed */}
+          <button
+            onClick={() => setCollapsed(true)}
+            className={clsx(
+              "hidden md:flex flex-shrink-0 items-center justify-center h-[65px] cursor-col-resize",
+              "text-[rgb(var(--muted))] hover:text-[rgb(var(--sidebar-fg))] transition-all duration-300 overflow-hidden",
+              collapsed ? "w-0 opacity-0 pointer-events-none" : "w-8 mr-1 opacity-100"
+            )}
+            aria-label="Collapse sidebar"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
         </div>
 
         {/* New conversation */}
