@@ -262,7 +262,7 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
           {/* Logo area */}
           <div className={clsx(
             "flex items-center transition-all duration-300 flex-1 min-w-0",
-            collapsed ? "justify-center" : "pl-4 gap-3"
+            collapsed ? "pl-4" : "pl-4 gap-3"
           )}>
             {/* Logo wrapper — fixed 40×40, hover shows PanelLeft when collapsed */}
             <div
