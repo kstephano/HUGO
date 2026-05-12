@@ -5,7 +5,7 @@
 
 <br clear="left">
 
-Have you ever wanted an astronaut robot AI assistant to be your friend and counselor for almost anything you can think to ask of him? Look no further. I present HUGO - a personal AI assistant. If you haven't been living under a rock the past few years, you may know what that is.
+Have you ever wanted an astronaut robot AI assistant to be your friend and counselor for almost anything you can think to ask of him? Look no further. I present HUGO - a personal AI assistant. 
 
 ---
 
@@ -42,7 +42,7 @@ Agent tools run concurrently (up to 5 in parallel) with a 30-second timeout each
 
 ## In Action
 
-**Login Page** <font color="gray"><em>Google is everywhere man</em></font>
+**Login Page** <font color="gray"><em>Google is everywhere</em></font>
 
 <img width="320" alt="5916C9FC-3900-407C-B7E8-07BE9CCFA8B6_1_102_o" src="https://github.com/user-attachments/assets/8283b8f9-8440-41ba-b0aa-707e646bbb68" />
 
