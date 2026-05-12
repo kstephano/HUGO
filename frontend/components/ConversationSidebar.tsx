@@ -272,7 +272,8 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
               height={40}
               onClick={handleLogoClick}
               className={clsx(
-                "flex-shrink-0 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.2)] cursor-pointer select-none",
+                "flex-shrink-0 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.2)] cursor-pointer select-none transition-all duration-300",
+                collapsed ? "w-8 h-8" : "w-10 h-10",
                 logoWobbling && "animate-logo-wobble"
               )}
             />
