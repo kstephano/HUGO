@@ -66,7 +66,7 @@ function EmptyState({ onPromptSelect, onRevealInput }: { onPromptSelect?: (text:
     if (promptPhase === "entering") {
       t = setTimeout(() => setPromptPhase("holding"), 1500);
     } else if (promptPhase === "holding") {
-      t = setTimeout(() => setPromptPhase("leaving"), 12000);
+      t = setTimeout(() => setPromptPhase("leaving"), 5000);
     } else {
       t = setTimeout(() => {
         setPromptIndex((i) => (i + 1) % SUGGESTED_PROMPTS.length);
