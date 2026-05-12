@@ -11,7 +11,7 @@ Have you ever wanted an astronaut robot AI assistant to be your friend and couns
 
 ## What Hugo Does
 
-Hugo has a watch that allows him to tell the time. He also has the latest iPhone 17 Pro with EE Super 5G connectivity, so he's connected to the internet wherever you and him go, even in space! This allows him to answer time-sensitive questions, in which the underlying model (Claude Sonnet), hasn't been trained on. 
+Hugo has a cool watch that allows him to tell the time. He also has the latest iPhone 17 Pro with EE Super 5G connectivity, so he's connected to the internet wherever you and him go, even in space! This allows him to answer time-sensitive questions, in which the underlying model (Claude Sonnet), hasn't been trained on. 
 
 He can also load up your images or PDF files to read through and digest. When a problem is hard, he enters MUSE (Moment of Unhurried, Sustained Examination) to really get to grips with the issue.
 
@@ -42,7 +42,7 @@ Agent tools run concurrently (up to 5 in parallel) with a 30-second timeout each
 
 ## In Action
 
-**Login Page** <font color="gray"><em>Google is everywhere</em></font>
+**Login Page** <font color="gray"><em>Can't escape Google...</em></font>
 
 <img width="320" alt="5916C9FC-3900-407C-B7E8-07BE9CCFA8B6_1_102_o" src="https://github.com/user-attachments/assets/8283b8f9-8440-41ba-b0aa-707e646bbb68" />
 
