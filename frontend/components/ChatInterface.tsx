@@ -227,54 +227,52 @@ export function ChatInterface({ conversationId }: Props) {
         )}
 
         <div className="max-w-3xl mx-auto flex items-end gap-2">
-          {/* Image attach button */}
-          <button
-            onClick={() => imageInputRef.current?.click()}
-            disabled={isStreaming}
-            className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-xl
-              border border-[rgb(var(--border))] text-[rgb(var(--muted))]
-              hover:text-purple-400 hover:border-purple-500/40
-              disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-            aria-label="Attach image"
-          >
-            <ImagePlus className="w-4 h-4" />
-          </button>
-          {/* PDF attach button */}
-          <button
-            onClick={() => pdfInputRef.current?.click()}
-            disabled={isStreaming}
-            className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-xl
-              border border-[rgb(var(--border))] text-[rgb(var(--muted))]
-              hover:text-purple-400 hover:border-purple-500/40
-              disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-            aria-label="Attach PDF"
-          >
-            <FileText className="w-4 h-4" />
-          </button>
-          <textarea
-            ref={textareaRef}
-            value={input}
-            onChange={(e) => {
-              // Replace "* " or "- " at the start of any line with a bullet character.
-              // Both are 2 chars wide so cursor position is preserved without adjustment.
-              setInput(e.target.value.replace(/^[*-] /gm, "• "));
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSend();
-              }
-            }}
-            placeholder="Ask Hugo anything…"
-            rows={1}
-            disabled={isStreaming}
-            className="flex-1 resize-none rounded-xl border border-[rgb(var(--border))]
-              bg-[rgb(var(--bg))] text-[rgb(var(--fg))]
-              placeholder:text-[rgb(var(--muted))]
-              px-4 py-2.5 text-base sm:text-sm
-              focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:border-purple-500/40
-              transition-all overflow-hidden disabled:opacity-40"
-          />
+          {/* Textarea with attach buttons inset bottom-left */}
+          <div className="relative flex-1">
+            <textarea
+              ref={textareaRef}
+              value={input}
+              onChange={(e) => {
+                setInput(e.target.value.replace(/^[*-] /gm, "• "));
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
+              placeholder="Ask Hugo anything…"
+              rows={1}
+              disabled={isStreaming}
+              className="w-full resize-none rounded-xl border border-[rgb(var(--border))]
+                bg-[rgb(var(--bg))] text-[rgb(var(--fg))]
+                placeholder:text-[rgb(var(--muted))]
+                pl-[68px] pr-4 py-2.5 text-base sm:text-sm
+                focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:border-purple-500/40
+                transition-all overflow-hidden disabled:opacity-40"
+            />
+            {/* Attach buttons — inside bottom-left of textarea */}
+            <div className="absolute left-2 bottom-[9px] flex items-center gap-0.5">
+              <button
+                onClick={() => imageInputRef.current?.click()}
+                disabled={isStreaming}
+                className="w-7 h-7 flex items-center justify-center rounded-lg text-[rgb(var(--muted))]
+                  hover:text-purple-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                aria-label="Attach image"
+              >
+                <ImagePlus className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => pdfInputRef.current?.click()}
+                disabled={isStreaming}
+                className="w-7 h-7 flex items-center justify-center rounded-lg text-[rgb(var(--muted))]
+                  hover:text-purple-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                aria-label="Attach PDF"
+              >
+                <FileText className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
           {isStreaming ? (
             <button
               onClick={handleCancel}

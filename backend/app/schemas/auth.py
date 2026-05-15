@@ -31,4 +31,5 @@ class SessionResponse(CamelModel):
     user_id: str
     email: str
     display_name: str
+    avatar_url: str | None = None
     remember_conversations: bool = True

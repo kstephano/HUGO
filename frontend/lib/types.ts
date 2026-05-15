@@ -4,6 +4,7 @@ export interface User {
   userId: string;
   email: string;
   displayName: string;
+  avatarUrl?: string | null;
   rememberConversations: boolean;
 }
 

@@ -25,6 +25,7 @@ def _session_response(user: User) -> SessionResponse:
         user_id=user.id,
         email=user.email,
         display_name=user.display_name,
+        avatar_url=user.avatar_url,
         remember_conversations=user.remember_conversations,
     )
 
@@ -72,6 +73,7 @@ async def google_login(
     google_id = token_data.get("sub")
     email = token_data.get("email", "")
     name = token_data.get("name") or token_data.get("given_name") or email.split("@")[0]
+    picture = token_data.get("picture")
 
     # Find user by google_id first, then fall back to email
     result = await db.execute(select(User).where(User.google_id == google_id))
@@ -82,13 +84,15 @@ async def google_login(
         user = result.scalar_one_or_none()
 
     if user is None:
-        user = User(id=str(uuid.uuid4()), email=email, display_name=name, google_id=google_id)
+        user = User(id=str(uuid.uuid4()), email=email, display_name=name, google_id=google_id, avatar_url=picture)
         db.add(user)
     else:
         if user.google_id is None:
             user.google_id = google_id
         if user.display_name != name and name:
             user.display_name = name
+        if picture:
+            user.avatar_url = picture
 
     await db.commit()
     await db.refresh(user)

@@ -205,7 +205,23 @@ function EmptyState({ onPromptSelect, onRevealInput }: { onPromptSelect?: (text:
   );
 }
 
-function MessageBubble({ msg }: { msg: Message }) {
+function UserAvatar() {
+  const user = useStore((s) => s.user);
+  const initials = user?.displayName
+    ?.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() ?? "U";
+
+  return (
+    <div className="flex-shrink-0 w-7 h-7 rounded-full overflow-hidden bg-gradient-to-br from-purple-500 to-purple-700 shadow-[0_0_8px_rgba(147,51,234,0.45)] flex items-center justify-center">
+      {user?.avatarUrl
+        // eslint-disable-next-line @next/next/no-img-element
+        ? <img src={user.avatarUrl} alt={user.displayName} className="w-full h-full object-cover" />
+        : <span className="text-[10px] font-semibold text-white">{initials}</span>
+      }
+    </div>
+  );
+}
+
+function MessageBubble({ msg, isGrouped }: { msg: Message; isGrouped: boolean }) {
   const isUser = msg.role === "user";
   const text =
     typeof msg.content === "string"
@@ -215,29 +231,29 @@ function MessageBubble({ msg }: { msg: Message }) {
       : "";
 
   return (
-    <div className={clsx("flex items-end gap-2.5", isUser ? "flex-row-reverse" : "flex-row")}>
-      {/* Avatar */}
-      <div
-        className={clsx(
-          "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center overflow-hidden",
-          isUser
-            ? "bg-gradient-to-br from-purple-500 to-purple-700 shadow-[0_0_8px_rgba(147,51,234,0.45)]"
-            : ""
-        )}
-      >
-        {isUser
-          ? <User className="w-3.5 h-3.5 text-white" />
+    <div className={clsx(
+      "flex items-end gap-2.5",
+      isUser ? "flex-row-reverse" : "flex-row",
+      isGrouped ? "mt-1" : "mt-6 first:mt-0"
+    )}>
+      {/* Avatar — hidden for grouped messages, spacer kept for alignment */}
+      <div className="flex-shrink-0 w-7">
+        {!isGrouped && (isUser
+          ? <UserAvatar />
           : <Image src="/images/hugo-logo.png" alt="Hugo" width={28} height={28} className="rounded-full" />
-        }
+        )}
       </div>
 
       {/* Bubble */}
       <div
         className={clsx(
-          "max-w-[72%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
+          "max-w-[72%] px-4 py-2.5 text-sm leading-relaxed",
           isUser
-            ? "bg-gradient-to-br from-purple-600 to-purple-800 text-white rounded-br-sm shadow-[0_0_12px_rgba(147,51,234,0.25)]"
-            : "bg-[rgb(var(--bubble-assistant))] text-[rgb(var(--fg))] border border-[rgba(245,158,11,0.1)] rounded-bl-sm shadow-[0_2px_20px_rgba(245,158,11,0.06),0_1px_4px_rgba(0,0,0,0.4)]"
+            ? "bg-gradient-to-br from-purple-600 to-purple-800 text-white shadow-[0_0_12px_rgba(147,51,234,0.25)]"
+            : "bg-[rgb(var(--bubble-assistant))] text-[rgb(var(--fg))] border border-[rgba(245,158,11,0.1)] shadow-[0_2px_20px_rgba(245,158,11,0.06),0_1px_4px_rgba(0,0,0,0.4)]",
+          isGrouped
+            ? isUser ? "rounded-2xl rounded-tr-md" : "rounded-2xl rounded-tl-md"
+            : isUser ? "rounded-2xl rounded-br-sm" : "rounded-2xl rounded-bl-sm"
         )}
       >
         {msg.attachment?.type === "image" && msg.attachment.preview && (
@@ -400,9 +416,13 @@ export function MessageList({ conversationId, isPending = false, onPromptSelect,
 
   return (
     <div className="flex-1 overflow-y-auto scrollbar-thin px-3 py-4 sm:px-4 sm:py-6">
-      <div className="max-w-3xl mx-auto space-y-6">
-        {messages.map((msg) => (
-          <MessageBubble key={msg.id} msg={msg} />
+      <div className="max-w-3xl mx-auto">
+        {messages.map((msg, i) => (
+          <MessageBubble
+            key={msg.id}
+            msg={msg}
+            isGrouped={i > 0 && messages[i - 1].role === msg.role}
+          />
         ))}
         <StreamingBubble isPending={isPending} />
         <div ref={bottomRef} />

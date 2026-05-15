@@ -197,6 +197,7 @@ export default function HomePage() {
                       <Menu className="w-4 h-4" />
                     </button>
                     <span
+                      title={connectionStatus}
                       className={`w-1.5 h-1.5 rounded-full flex-shrink-0 transition-colors ${
                         connectionStatus === "connected"
                           ? "bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.7)]"
@@ -205,9 +206,6 @@ export default function HomePage() {
                           : "bg-red-500"
                       }`}
                     />
-                    <span className="text-[11px] text-[rgb(var(--muted))] tracking-widest uppercase">
-                      {connectionStatus}
-                    </span>
                   </div>
                   <ChatInterface conversationId={activeId} />
                 </ErrorBoundary>

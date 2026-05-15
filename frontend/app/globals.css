@@ -119,6 +119,22 @@
   animation: thought-in 0.2s ease forwards;
 }
 
+/* ── Prose code block refinement ────────────────────────────────── */
+.prose pre {
+  background: rgba(0, 0, 0, 0.55) !important;
+  border: 1px solid rgba(245, 158, 11, 0.12) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.4) !important;
+}
+.prose code:not(pre code) {
+  background: rgba(245, 158, 11, 0.09) !important;
+  color: rgba(245, 200, 80, 0.95) !important;
+  padding: 0.15em 0.45em !important;
+  border-radius: 4px !important;
+  font-size: 0.84em !important;
+  border: 1px solid rgba(245, 158, 11, 0.15) !important;
+}
+
 /* ── Empty state idle float ─────────────────────────────────────── */
 @keyframes idle-float {
   0%, 100% { transform: translateY(0); }

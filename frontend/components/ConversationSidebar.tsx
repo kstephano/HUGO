@@ -11,6 +11,18 @@ import clsx from "clsx";
 
 const FADE_MS = 400;
 
+function relativeTime(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const m = Math.floor(diff / 60000);
+  const h = Math.floor(diff / 3600000);
+  const d = Math.floor(diff / 86400000);
+  if (m < 1) return "now";
+  if (m < 60) return `${m}m`;
+  if (h < 24) return `${h}h`;
+  if (d < 7) return `${d}d`;
+  return new Date(dateStr).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+}
+
 interface Props {
   onLogout: () => void;
   mobileOpen?: boolean;
@@ -346,8 +358,8 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
         {!collapsed && (
           <nav className="flex-1 overflow-y-auto scrollbar-thin px-2 pb-2 space-y-0.5">
             {conversations.filter((c) => c.title).length === 0 && (
-              <p className="text-center text-[10px] text-[rgb(var(--muted))] mt-8 px-3 leading-relaxed">
-                No conversations yet
+              <p className="text-center text-[10px] text-[rgb(var(--muted))] mt-8 px-3 leading-relaxed italic">
+                Nothing yet. Ask me anything.
               </p>
             )}
             {conversations.filter((c) => c.title).map((conv) => (
@@ -369,6 +381,9 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
                 <div className="flex-1 min-w-0">
                   <span className="block truncate leading-snug">{conv.title ?? "New conversation"}</span>
                 </div>
+                <span className="flex-shrink-0 text-[9px] text-[rgb(var(--muted))] opacity-50 ml-1 group-hover:opacity-0 transition-opacity">
+                  {relativeTime(conv.updatedAt)}
+                </span>
                 <button
                   onClick={(e) => handleDelete(e, conv.id)}
                   className="opacity-0 group-hover:opacity-100 ml-1 flex-shrink-0 text-[rgb(var(--muted))] hover:text-red-400 transition-all"
@@ -434,13 +449,25 @@ export function ConversationSidebar({ onLogout, mobileOpen = false, onMobileClos
           {/* User info bar */}
           <div className={clsx("flex items-center gap-2", collapsed ? "flex-col py-3 px-2" : "px-3 py-3")}>
             {!collapsed && (
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-[rgb(var(--sidebar-fg))] truncate leading-none">
-                  {user?.displayName ?? ""}
-                </p>
-                <p className="text-[10px] text-[rgb(var(--muted))] truncate mt-0.5">
-                  {user?.email ?? ""}
-                </p>
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                {/* User avatar */}
+                <div className="flex-shrink-0 w-6 h-6 rounded-full overflow-hidden bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
+                  {user?.avatarUrl
+                    // eslint-disable-next-line @next/next/no-img-element
+                    ? <img src={user.avatarUrl} alt={user.displayName} className="w-full h-full object-cover" />
+                    : <span className="text-[8px] font-semibold text-white">
+                        {user?.displayName?.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() ?? "U"}
+                      </span>
+                  }
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs text-[rgb(var(--sidebar-fg))] truncate leading-none">
+                    {user?.displayName ?? ""}
+                  </p>
+                  <p className="text-[10px] text-[rgb(var(--muted))] truncate mt-0.5">
+                    {user?.email ?? ""}
+                  </p>
+                </div>
               </div>
             )}
 
