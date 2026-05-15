@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 import Image from "next/image";
 import { FileText, ImagePlus, Square, X } from "lucide-react";
+import clsx from "clsx";
 import { useStore } from "@/lib/store";
 import { HugoWebSocket } from "@/lib/ws";
 import { MessageList } from "./MessageList";
@@ -192,7 +193,10 @@ export function ChatInterface({ conversationId }: Props) {
       )}
 
       {/* Input bar — hidden until user acts on empty conversation */}
-      {showInputBar && <div className="flex-shrink-0 border-t border-[rgb(var(--border))] bg-[rgba(5,9,22,0.82)] backdrop-blur-sm px-3 py-2 sm:px-4 sm:py-3">
+      {showInputBar && <div className={clsx(
+        "flex-shrink-0 border-t bg-[rgba(5,9,22,0.82)] backdrop-blur-sm px-3 py-2 sm:px-4 sm:py-3 transition-colors duration-500",
+        isStreaming ? "animate-input-glow border-[rgba(245,158,11,0.15)]" : "border-[rgb(var(--border))]"
+      )}>
         {/* Hidden file inputs */}
         <input ref={imageInputRef} type="file" accept="image/*" className="hidden"
           onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileSelect(f); e.target.value = ""; }} />

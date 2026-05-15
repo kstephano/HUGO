@@ -154,7 +154,7 @@ function EmptyState({ onPromptSelect, onRevealInput }: { onPromptSelect?: (text:
           alt="Hugo"
           width={52}
           height={52}
-          className="rounded-full shadow-[0_0_20px_rgba(245,158,11,0.2)]"
+          className="rounded-full shadow-[0_0_20px_rgba(245,158,11,0.2)] animate-idle-float"
         />
         <p className="text-[18px] font-medium text-white">{OPENING_LINE}</p>
       </div>
@@ -237,7 +237,7 @@ function MessageBubble({ msg }: { msg: Message }) {
           "max-w-[72%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
           isUser
             ? "bg-gradient-to-br from-purple-600 to-purple-800 text-white rounded-br-sm shadow-[0_0_12px_rgba(147,51,234,0.25)]"
-            : "bg-[rgb(var(--bubble-assistant))] text-[rgb(var(--fg))] border border-[rgb(var(--border))] rounded-bl-sm shadow-sm"
+            : "bg-[rgb(var(--bubble-assistant))] text-[rgb(var(--fg))] border border-[rgba(245,158,11,0.1)] rounded-bl-sm shadow-[0_2px_20px_rgba(245,158,11,0.06),0_1px_4px_rgba(0,0,0,0.4)]"
         )}
       >
         {msg.attachment?.type === "image" && msg.attachment.preview && (
@@ -323,7 +323,7 @@ function StreamingBubble({ isPending }: { isPending: boolean }) {
       </div>
 
       {/* Bubble */}
-      <div className="max-w-[72%] rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm leading-relaxed bg-[rgb(var(--bubble-assistant))] text-[rgb(var(--fg))] border border-[rgb(var(--border))] shadow-sm">
+      <div className="max-w-[72%] rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm leading-relaxed bg-[rgb(var(--bubble-assistant))] text-[rgb(var(--fg))] border border-[rgba(245,158,11,0.1)] shadow-[0_2px_20px_rgba(245,158,11,0.06),0_1px_4px_rgba(0,0,0,0.4)]">
         {/* Pending state — no tokens yet */}
         {isPending && !isActive && (
           <span className="flex items-center gap-1.5 text-xs italic" style={{ color: "#FFE81F" }}>
